@@ -1,53 +1,55 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import StudentsFilters from "./components/filters/StudentsFilters";
-import { classesMock, sectionsMock, examsMock, curriculumMock, gradesMock, } from "../../mock/students.mock";
-import StudentsTable from "./components/table/StudentsTable";
-
+import { getClasses } from "../../services/classes.service";
+import { getSections } from "../../services/sections.service";
 function Students() {
   const [classId, setClassId] = useState("");
+  const [classes, setClasses] = useState([]);
+  const [sections, setSections] = useState([]);
   const [sectionId, setSectionId] = useState("");
-  const [exams, setExams] = useState("");
-  const [examId, setExamId] = useState("");
 
-  const subjects = curriculumMock[classId]?.subjects ?? [];
+  // 📌 جلب الصفوف فقط
+  useEffect(() => {
+    async function loadClasses() {
+      try {
+        const data = await getClasses();
+        console.log("CLASSES FROM API:", data.data); // للتأكد
+        setClasses(data.data);
+      } catch (err) {
+        console.error(err);
+      }
+    }
 
-  const students =
-    gradesMock[`${classId}-${sectionId}`]?.students ?? [];
+    loadClasses();
+  }, []);
 
-  const onExamChange = (value) => {
-    setExamId(value);
-  };
-  const handleClassChange = (value) => {
+
+  const handleClassChange = async (value) => {
     setClassId(value);
     setSectionId(""); // reset section
 
+    try {
+      const data = await getSections(value);
+      setSections(data.data);
+      console.log("SECTIONS FROM API:", data.data); // للتأكد
+    } catch (err) {
+      console.error(err);
+    }
   };
-
-  const handleSectionChange = (value) => {
-    setSectionId(value);
-  };
-
-
-
 
   return (
     <div>
-      {
-        <StudentsFilters
-          classId={classId}
-          sectionId={sectionId}
-          examId={examId}
-          classes={classesMock}
-          sections={sectionsMock[classId] || []}
-          exams={examsMock}
-          onClassChange={handleClassChange}
-          onSectionChange={handleSectionChange}
-          onExamChange={setExamId}
-        />
-      }
-      <StudentsTable
-        subjects={subjects}
-        students={students}
+      <StudentsFilters
+        classId={classId}
+        sectionId={sectionId}
+        sections={sections}
+        examId=""
+        classes={classes}
+        // sections={[]}
+        exams={[]}
+        onClassChange={handleClassChange}
+        onSectionChange={() => { }}
+        onExamChange={() => { }}
       />
     </div>
   );

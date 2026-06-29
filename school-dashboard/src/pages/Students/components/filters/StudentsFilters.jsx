@@ -39,7 +39,8 @@ function StudentsFilters({
         >
           {classes.map((c) => (
             <MenuItem key={c.id} value={c.id}>
-              {c.name}
+              {c.class_name}
+              {/* console.log("CLASSES FROM API:",  {c.name}); // للتأكد */}
             </MenuItem>
           ))}
         </Select>
@@ -55,7 +56,7 @@ function StudentsFilters({
         >
           {sections.map((s) => (
             <MenuItem key={s.id} value={s.id}>
-              {s.name}
+              {s.section_name}
             </MenuItem>
           ))}
         </Select>

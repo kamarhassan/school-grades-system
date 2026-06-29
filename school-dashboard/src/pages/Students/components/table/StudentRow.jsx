@@ -13,7 +13,7 @@ function StudentRow({ student, subjects }) {
                 <GradeCell
                     key={subject.id}
                     subject={subject}
-                    grade={student.grades?.[subject.id]}
+                grade={student.grades?.[examId]?.[subject.id]}
                 />
             ))}
 
