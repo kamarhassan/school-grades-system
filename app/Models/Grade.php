@@ -3,36 +3,18 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class Grade extends Model
 {
-    use HasFactory;
+    protected $fillable = ['student_id', 'plan_id', 'first_term_score', 'second_term_score', 'final_score'];
 
-    protected $fillable = [
-        'academic_year_id',
-        'name',
-        'sort_order',
-        'passing_average'
-    ];
-
-    public function academicYear()
+    public function student()
     {
-        return $this->belongsTo(AcademicYear::class);
+        return $this->belongsTo(Student::class, 'student_id');
     }
 
-    public function sections()
+    public function subjectPlan()
     {
-        return $this->hasMany(Section::class);
+        return $this->belongsTo(ClassSubjectPlan::class, 'plan_id');
     }
-
-    public function subjects()
-    {
-        return $this->hasMany(Subject::class);
-    }
-
-    public function users()
-    {
-        return $this->belongsToMany(User::class, 'user_grade_permissions');
-    }
-
 }

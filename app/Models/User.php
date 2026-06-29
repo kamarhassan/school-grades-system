@@ -12,7 +12,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasApiTokens,HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;//HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -48,15 +48,8 @@ class User extends Authenticatable
         ];
     }
 
-    public function grades()
+    public function supervisedSections()
     {
-        return $this->belongsToMany(Grade::class, 'user_grade_permissions');
+        return $this->hasMany(Section::class, 'supervisor_id');
     }
-
-    public function gradePermissions()
-{
-    return $this->hasMany(UserGradePermission::class);
-}
-
-
 }

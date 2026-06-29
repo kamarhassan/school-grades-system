@@ -1,26 +1,22 @@
 <?php
 
 namespace App\Models;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 use Illuminate\Database\Eloquent\Model;
 
 class Student extends Model
 {
-    use HasFactory;
+    protected $fillable = ['student_name', 'section_id'];
 
-    protected $fillable = [
-        'section_id',
-        'student_number',
-        'full_name'
-    ];
-
+    // الطالب ينتمي لشعبة
     public function section()
     {
-        return $this->belongsTo(Section::class);
+        return $this->belongsTo(Section::class, 'section_id');
     }
 
-    public function marks()
+    // الطالب لديه علامات متعددة مرصودة
+    public function grades()
     {
-        return $this->hasMany(Mark::class);
+        return $this->hasMany(Grade::class, 'student_id');
     }
 }
