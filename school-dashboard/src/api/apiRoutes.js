@@ -1,9 +1,9 @@
 
-const API_BASE_URL = "http://localhost/grade/api";
+export const API_BASE_URL = "http://localhost/grade/api";
 
 
 export const API_ROUTES = {
-  API_BASE_URL: `${API_BASE_URL}`,
+  //  API_BASE_URL: `${API_BASE_URL}`,
   LOGIN: `${API_BASE_URL}/login`,
   LOGOUT: `${API_BASE_URL}/logout`,
   ME: `${API_BASE_URL}/me`,

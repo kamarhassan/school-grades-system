@@ -41,12 +41,7 @@ class AuthController extends Controller
      */
     public function login(LoginRequest $request)
     {
-        // return response()->json([
-        //     'success' => true,
-        //     'message' => 'تم تسجيل الدخول  hgsdajhdgjgdsjfgjdsgبنجاح',
-
-        //     'token_type' => 'Bearer',
-        // ], 200);
+       
         $user = User::where('email', $request->email)->first();
 
         // التحقق من صحة كلمة المرور
@@ -63,7 +58,7 @@ class AuthController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'تم تسجيل الدخول بنجاح',
-            'access_token' => $token,
+            'token' => $token,
             'token_type' => 'Bearer',
             'user' => [
                 'id' => $user->id,

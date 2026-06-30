@@ -3,6 +3,7 @@ import { API_ROUTES } from "../api/apiRoutes";
 
 export const login = async (credentials) => {
   const response = await api.post(API_ROUTES.LOGIN, credentials);
+  
   return response.data;
 };
 

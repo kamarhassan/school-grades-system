@@ -15,27 +15,37 @@ export function AuthProvider({ children }) {
     const checkAuth = async () => {
         try {
             const response = await authService.me();
-            setUser(response.data);
+
+            // غالبًا Laravel يرجع user مباشرة أو داخل data
+            setUser(response.user || response.data);
         } catch (error) {
+            log
             setUser(null);
+            localStorage.removeItem("token"); // حماية
         } finally {
             setLoading(false);
         }
     };
 
     const login = async (credentials) => {
-        const response = await authService.login(credentials);
+    const response = await authService.login(credentials);
 
-        // بعد نجاح تسجيل الدخول نجلب بيانات المستخدم
-        await checkAuth();
+    console.log("LOGIN RESPONSE:", response);
+    console.log("TOKEN:", response.token);
 
-        return response;
-    };
+    localStorage.setItem("token", response.token);
 
+    console.log("STORED TOKEN:", localStorage.getItem("token"));
+
+    await checkAuth();
+
+    return response;
+};
     const logout = async () => {
         try {
             await authService.logout();
         } finally {
+            localStorage.removeItem("token");
             setUser(null);
         }
     };

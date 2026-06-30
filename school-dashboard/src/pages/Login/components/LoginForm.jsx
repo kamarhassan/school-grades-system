@@ -41,12 +41,16 @@ function LoginForm() {
         try {
             setLoading(true);
 
-            await login(form);
+            // await login(form);
+  const response = await login(form);
+
+        console.log("LOGIN RESPONSE:", response);
+        console.log("TOKEN IN STORAGE:", localStorage.getItem("token"));
 
             navigate("/", { replace: true });
 
         } catch (error) {
-            console.error(error);
+            // console.error(error);
             setError("بيانات الدخول غير صحيحة");
 
         } finally {

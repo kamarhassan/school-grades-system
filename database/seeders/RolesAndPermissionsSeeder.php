@@ -16,16 +16,18 @@ class RolesAndPermissionsSeeder extends Seeder
     public function run(): void
     {
         // إنشاء صلاحيات
+        $addGrades = Permission::create(['name' => 'add grades']);
         $editGrades = Permission::create(['name' => 'edit grades']);
-        $viewSections = Permission::create(['name' => 'view sections']);
+        $viewGrades = Permission::create(['name' => 'view grades']);
 
         // إنشاء أدوار
         $adminRole = Role::create(['name' => 'admin']);
         $supervisorRole = Role::create(['name' => 'supervisor']);
 
         // ربط الصلاحيات بالأدوار
-        $supervisorRole->givePermissionTo($viewSections);
-        $adminRole->givePermissionTo([$editGrades, $viewSections]); // المدير يأخذ كل شيء
-        $user = User::find(3);
+        $supervisorRole->givePermissionTo($viewGrades);
+        $adminRole->givePermissionTo([$editGrades, $viewGrades]); // المدير يأخذ كل شيء
+        $user = User::find(1);
+        $user->assignRole('admin');
     }
 }
