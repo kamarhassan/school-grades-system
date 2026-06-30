@@ -26,6 +26,6 @@ class RolesAndPermissionsSeeder extends Seeder
         // ربط الصلاحيات بالأدوار
         $supervisorRole->givePermissionTo($viewSections);
         $adminRole->givePermissionTo([$editGrades, $viewSections]); // المدير يأخذ كل شيء
-        $user = User::find(1);
+        $user = User::find(3);
     }
 }
