@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Section extends Model
 {
- protected $fillable = ['section_name', 'class_id', 'supervisor_id'];
+ protected $fillable = ['section_name', 'class_id', 'supervisor_id', 'academic_year_id'];
 
     // الشعبة تنتمي لصف معين
     public function schoolClass()

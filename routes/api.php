@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\API\GradeController;
 use App\Http\Controllers\Api\SchoolClassController;
 use App\Http\Controllers\Api\SectionController;
+use App\Http\Controllers\Api\SettingsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -31,8 +32,21 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     Route::get('sections', [SectionController::class, 'index']);
+
     Route::post('grades/grid', [GradeController::class, 'getGradeGrid']);
 
     Route::get('class-sections', [SectionController::class, 'getSectionsByClass']);
     Route::middleware('permission:edit grades')->post('/grades/save', [GradeController::class, 'saveGrades']);
+
+
+
+
+    route::prefix('settings')->group(function () {
+        Route::get('sections', [SettingsController::class, 'index']);      // عرض الكل
+        Route::post('sectionsStoreSetting', [SettingsController::class, 'store']);     // إضافة شعبة لصف
+        // Route::put('/sections/{id}', [SettingsController::class, 'update']); // تعديل الربط
+        // Route::delete('/sections/{id}', [SettingsController::class, 'destroy']); // حذف
+
+
+    });
 });

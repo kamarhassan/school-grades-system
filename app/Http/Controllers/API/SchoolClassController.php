@@ -16,9 +16,9 @@ class SchoolClassController extends Controller
         $userId = auth()->id();
 
        $classes = SchoolClass::select('id', 'class_name')
-            ->whereHas('sections', function ($query) use ($userId) {
-                $query->where('supervisor_id', $userId);
-            })
+            // ->whereHas('sections', function ($query) use ($userId) {
+            //     $query->where('supervisor_id', $userId);
+            // })
             ->get();
 
         return response()->json([

@@ -15,19 +15,68 @@ class RolesAndPermissionsSeeder extends Seeder
      */
     public function run(): void
     {
-        // إنشاء صلاحيات
-        $addGrades = Permission::create(['name' => 'add grades']);
-        $editGrades = Permission::create(['name' => 'edit grades']);
-        $viewGrades = Permission::create(['name' => 'view grades']);
+        $adminRole = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+        $supervisorRole = Role::firstOrCreate(['name' => 'supervisor', 'guard_name' => 'web']);
+        $teacherRole = Role::firstOrCreate(['name' => 'teacher', 'guard_name' => 'web']);
+        $studentRole = Role::firstOrCreate(['name' => 'student', 'guard_name' => 'web']);
 
-        // إنشاء أدوار
-        $adminRole = Role::create(['name' => 'admin']);
-        $supervisorRole = Role::create(['name' => 'supervisor']);
+        // 2. تعريف الأذونات مع المجموعات
+        $permissions = [
+            // أذونات المدير (Admin)
+            'admin' => [
+                'edit marks',
+                'add student',
+                'edit grades',
+                'view grades',
+                'print grades',
+                'manage users',
+                'manage classes',
+                'manage sections',
+                'manage subjects',
+                'manage academic years',
+                'view reports',
+            ],
+            // أذونات المشرف (Supervisor)
+            'supervisor' => [
+                'edit grades',
+                'view grades',
+                'print grades',
+                'view students',
+                'manage sections',
+            ],
+            // أذونات المعلم (Teacher)
+            'teacher' => [
+                'view grades',
+                'add grades',
+                'edit grades',
+                'view students',
+            ],
+            // أذونات الطالب (Student)
+            'student' => [
+                'view grades',
+                'view reports',
+            ],
+        ];
 
-        // ربط الصلاحيات بالأدوار
-        $supervisorRole->givePermissionTo($viewGrades);
-        $adminRole->givePermissionTo([$editGrades, $viewGrades]); // المدير يأخذ كل شيء
-        $user = User::find(1);
-        $user->assignRole('admin');
+        // 3. إنشاء الأذونات وتعيينها للأدوار
+        foreach ($permissions as $roleName => $permissionNames) {
+            $role = Role::where('name', $roleName)->where('guard_name', 'web')->first();
+            
+            if ($role) {
+                foreach ($permissionNames as $permissionName) {
+                    // إنشاء الصلاحية إذا لم تكن موجودة
+                    $permission = Permission::firstOrCreate([
+                        'name' => $permissionName,
+                        'guard_name' => 'web',
+                    ]);
+                    
+                    // تعيين الصلاحية للدور
+                    $role->givePermissionTo($permission);
+                }
+            }
+        }
+
+        // 4. عرض رسالة نجاح (اختياري)
+        $this->command->info('Permissions and roles seeded successfully!');
     }
 }

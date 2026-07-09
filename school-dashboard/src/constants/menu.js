@@ -22,11 +22,11 @@ export const menuItems = [
     path: "/studentsreports",
     icon: MenuBookIcon,
   },
-  // {
-  //   title: "Subjects",
-  //   path: "/subjects",
-  //   icon: MenuBookIcon,
-  // },
+  {
+    title: "Settings",
+    path: "/settings",
+    icon: SettingsIcon,
+  },
   // {
   //   title: "Classes",
   //   path: "/classes",

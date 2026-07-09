@@ -15,17 +15,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // $user = User::find(3);
-        // $user->assignRole('admin');
-        // User::factory(10)->create();
-
-    
-        $this->call([
-            FakerDataSeed::class,
-        ]);
-
+      
         $this->call([
             RolesAndPermissionsSeeder::class,
         ]);
+
+        $this->call([
+            Userseed::class,
+        ]);
+    
+        $this->call([
+            ClassSeed::class,
+        ]);
+
     }
 }

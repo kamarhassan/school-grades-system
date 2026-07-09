@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import Students from "../pages/Students/Students";
+import Settings from "../pages/Settings/Settings";
 import StudentsReports from "../pages/Reports/StudentsReports";
 import Login from "../pages/Login/Login";
 import ProtectedRoute from "./ProtectedRoute";
@@ -25,8 +26,8 @@ function AppRoutes() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/students" element={<Students />} />
           <Route path="/studentsreports" element={<StudentsReports />} />
-          {/*  <Route path="/classes" element={<Classes />} />
-          <Route path="/exams" element={<Exams />} />
+            <Route path="/settings" element={<Settings/>} />
+         {/* <Route path="/exams" element={<Exams />} />
           <Route path="/supervisors" element={<Supervisors />} />
           <Route path="/settings" element={<Settings />} /> */}
         </Route>
