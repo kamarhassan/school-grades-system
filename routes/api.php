@@ -35,7 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('grades/grid', [GradeController::class, 'getGradeGrid']);
 
-    Route::get('class-sections', [SectionController::class, 'getSectionsByClass']);
+    Route::get('class-sections', [SectionController::class, 'getSectionsByClass']); // get section if class_id is provided in the request   
     Route::middleware('permission:edit grades')->post('/grades/save', [GradeController::class, 'saveGrades']);
 
 
@@ -44,9 +44,7 @@ Route::middleware('auth:sanctum')->group(function () {
     route::prefix('settings')->group(function () {
         Route::get('sections', [SettingsController::class, 'index']);      // عرض الكل
         Route::post('sectionsStoreSetting', [SettingsController::class, 'store']);     // إضافة شعبة لصف
-        // Route::put('/sections/{id}', [SettingsController::class, 'update']); // تعديل الربط
-        // Route::delete('/sections/{id}', [SettingsController::class, 'destroy']); // حذف
-
+        
 
     });
 });

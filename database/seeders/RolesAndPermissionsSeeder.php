@@ -29,11 +29,11 @@ class RolesAndPermissionsSeeder extends Seeder
                 'edit grades',
                 'view grades',
                 'print grades',
-                'manage users',
-                'manage classes',
-                'manage sections',
-                'manage subjects',
-                'manage academic years',
+                'settings',
+                'classes',
+                'sections',
+                'subjects',
+                'academic years',
                 'view reports',
             ],
             // أذونات المشرف (Supervisor)
@@ -42,7 +42,7 @@ class RolesAndPermissionsSeeder extends Seeder
                 'view grades',
                 'print grades',
                 'view students',
-                'manage sections',
+                'sections',
             ],
             // أذونات المعلم (Teacher)
             'teacher' => [

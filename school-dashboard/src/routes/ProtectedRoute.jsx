@@ -1,20 +1,31 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../auth/context/AuthContext";
+import { hasPermission } from "../auth/utils/permissions";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
+  const location = useLocation();
 
-  // أثناء فحص /me
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  // غير مسجل دخول
   if (!user) {
     return <Navigate to="/login" replace />;
   }
 
-  // مسجل دخول
+  const routePermissions = {
+    "/settings": "settings",
+    "/students": "view students",
+    "/studentsreports": "view grades",
+  };
+
+  const requiredPermission = routePermissions[location.pathname];
+
+  if (requiredPermission && !hasPermission(user, requiredPermission)) {
+    return <Navigate to="/" replace />;
+  }
+
   return children;
 }
 

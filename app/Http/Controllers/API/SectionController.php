@@ -22,6 +22,7 @@ class SectionController extends Controller
         ])->get();
         return response()->json([
             'success' => true,
+            'message' => 'تم جلب جميع الشعب بنجاح',
             'data' => $sections
         ], 200);
     }
@@ -32,10 +33,13 @@ class SectionController extends Controller
     {
         // الكود لا يدخل إلى هنا إلا إذا نجح التحقق (Validation) تماماً
         
-        $sections = Section::where('class_id', $request->class_id)
-            ->with(['supervisor:id,name,email'])
-            ->get(['id', 'section_name', 'class_id', 'supervisor_id']);
+        // auth()->user(); // جلب المستخدم الحالي (المسجل الدخول)
+       
 
+       $sections = Section::where('class_id', $request->class_id)
+    ->whereNotNull('supervisor_id')
+    ->with(['supervisor:id,name,email'])
+    ->get();
         return response()->json([
             'success' => true,
             'class_id' => $request->class_id,
