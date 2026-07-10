@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ClassSubjectPlan extends Model
 {
+
+
     protected $fillable = [
         'class_id',
         'subject_id',
@@ -35,4 +37,9 @@ class ClassSubjectPlan extends Model
     {
         return $this->hasMany(Grade::class, 'plan_id');
     }
+public function academicYear()
+    {
+        return $this->belongsTo(AcademicYear::class, 'academic_year_id');
+    }
+
 }

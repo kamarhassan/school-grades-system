@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import StudentsFilters from "./components/filters/StudentsFilters";
 import { getClasses } from "../../services/classes.service";
-import { getSections } from "../../services/sections.service";
+import { getSections ,getstudents} from "../../services/sections.service";
 function Students() {
   const [classId, setClassId] = useState("");
   const [classes, setClasses] = useState([]);
@@ -37,6 +37,21 @@ function Students() {
     }
   };
 
+  const handleSectionChange =  async (value) => {
+    setSectionId(value);
+
+    try {
+      // يمكنك إضافة أي منطق إضافي هنا إذا لزم الأمر عند تغيير القسم
+      // const data = await getstudents(value);
+     
+      console.log("SECTIONS FROM API:" ); // للتأكد
+    
+    } catch (err) {
+      console.error(err);
+    }
+  }
+  
+
   return (
     <div>
       <StudentsFilters
@@ -48,7 +63,7 @@ function Students() {
         // sections={[]}
         exams={[]}
         onClassChange={handleClassChange}
-        onSectionChange={() => { }}
+        onSectionChange={handleSectionChange}
         onExamChange={() => { }}
       />
     </div>

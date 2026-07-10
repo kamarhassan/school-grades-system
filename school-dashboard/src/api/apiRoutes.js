@@ -23,7 +23,7 @@ settings: `${API_BASE_URL}/settings/sections`,
 sectionsStoreSetting: `${API_BASE_URL}/settings/sectionsStoreSetting`,
 
 
-
+students: (sectionId) => `${API_BASE_URL}/students?section_id=${sectionId}`,
 
 
 

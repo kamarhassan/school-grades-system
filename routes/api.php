@@ -5,6 +5,8 @@ use App\Http\Controllers\API\GradeController;
 use App\Http\Controllers\Api\SchoolClassController;
 use App\Http\Controllers\Api\SectionController;
 use App\Http\Controllers\Api\SettingsController;
+use App\Http\Controllers\API\StudentsController;
+use Database\Seeders\StundentsSeed;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -31,6 +33,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
 
+    Route::get('getstudents', [StudentsController::class, 'getStudentsByClassAndSection']);
+    
     Route::get('sections', [SectionController::class, 'index']);
 
     Route::post('grades/grid', [GradeController::class, 'getGradeGrid']);
