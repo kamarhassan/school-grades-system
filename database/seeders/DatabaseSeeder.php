@@ -27,8 +27,11 @@ class DatabaseSeeder extends Seeder
         // $this->call([
         //     ClassSeed::class,
         // ]);
+        // $this->call([
+        //     StundentsSeed::class,
+        // ]);
         $this->call([
-            StundentsSeed::class,
+            SubjectPlanSeeder::class,
         ]);
 
     }
