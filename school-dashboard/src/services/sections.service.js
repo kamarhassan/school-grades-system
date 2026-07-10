@@ -8,7 +8,7 @@ export async function getSections(classId) {
 
 
 
-export async function getstudents(sectionId) {
-    const response = await api.get(API_ROUTES.students(sectionId));
+export async function getstudents(examId, classId, sectionId) {
+    const response = await api.get(API_ROUTES.getstudents(examId, classId, sectionId));
     return response.data;
 }

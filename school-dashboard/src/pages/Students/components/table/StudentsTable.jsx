@@ -10,10 +10,15 @@ import {
 
 import StudentRow from "./StudentRow";
 
-function StudentsTable({ subjects, students }) {
+function StudentsTable({ subjects = [], students = [] ,handleGradeChange }) {
   return (
-    <TableContainer component={Paper}>
-      <Table>
+    <TableContainer
+            component={Paper}
+            sx={{
+                maxHeight: 500, // ارتفاع الجدول قبل ظهور الـ scroll
+            }}
+        >
+            <Table stickyHeader>
 
         <TableHead>
           <TableRow>
@@ -35,6 +40,7 @@ function StudentsTable({ subjects, students }) {
               key={student.id}
               student={student}
               subjects={subjects}
+              handleGradeChange={handleGradeChange}
             />
           ))}
 

@@ -19,12 +19,9 @@ export const API_ROUTES = {
   //   grades: (examId, classId, sectionId) =>
   //     `${API_BASE_URL}/grades?examId=${examId}&classId=${classId}&sectionId=${sectionId}`,
 
-settings: `${API_BASE_URL}/settings/sections`,
-sectionsStoreSetting: `${API_BASE_URL}/settings/sectionsStoreSetting`,
-
-
-students: (sectionId) => `${API_BASE_URL}/students?section_id=${sectionId}`,
-
+  settings: `${API_BASE_URL}/settings/sections`,
+  sectionsStoreSetting: `${API_BASE_URL}/settings/sectionsStoreSetting`,
+  getstudents: (examsId,classId, sectionId) =>  `${API_BASE_URL}/getstudents/${examsId}/${classId}/${sectionId}`
 
 
 
