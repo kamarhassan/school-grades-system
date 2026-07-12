@@ -12,8 +12,6 @@ class SettingsController extends Controller
 {
 
 
-
-
     public function index()
     {
         // بدلاً من where('role', 'Supervisor')
@@ -153,5 +151,101 @@ class SettingsController extends Controller
             'status' => 'success',
             'message' => 'تم حذف الشعبة بنجاح.'
         ], 200);
+    }
+
+
+    public function currentschoolyear()
+    {
+        $currentAcademicYear = AcademicYear::all()->toArray();
+
+        if (!$currentAcademicYear) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'لم يتم العثور على أي عام دراسي.'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' =>  $currentAcademicYear,
+            // 'data' => [
+            //     // 'id' => $currentAcademicYear->id,
+            //     // 'year_name' => $currentAcademicYear->year_name,
+            //   $currentAcademicYear 
+            // ]
+        ], 200);
+    }
+
+    // SetCurrentSchoolYear 
+    public function SetCurrentSchoolYear($id)
+    {
+        $academicYear = AcademicYear::find($id);
+
+        if (!$academicYear) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'لم يتم العثور على العام الدراسي المحدد.'
+            ], 404);
+        }
+
+        // تحديث جميع الأعوام الدراسية لتكون غير حالية
+        AcademicYear::query()->update(['is_current' => 0]);
+
+        // تعيين العام الدراسي المحدد كعام دراسي حالي
+        $academicYear->is_current = 1;
+        $academicYear->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'تم تعيين العام الدراسي الحالي بنجاح.',
+            'data' => [
+                'id' => $academicYear->id,
+                'year_name' => $academicYear->year_name,
+                'is_current' => $academicYear->is_current,
+            ]
+        ], 200);
+    }
+
+
+    public function AddSchoolYear(Request $request)
+    {
+        $id = $request->id;
+        // تحقق مما إذا كان العام الدراسي موجودًا بالفعل
+        $existingYear = AcademicYear::find($id);
+        if ($existingYear) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'العام الدراسي موجود بالفعل.'
+            ], 400);
+        }
+
+        if ($request->is_active == 1) {
+            // تحديث جميع الأعوام الدراسية لتكون غير حالية
+            AcademicYear::query()->update(['is_current' => 0]);
+        }
+
+        // إنشاء عام دراسي جديد
+        $newAcademicYear = new AcademicYear();
+        $newAcademicYear->id = $id;
+        $newAcademicYear->year_name = $request->from . '/' . $request->to; // يمكنك تعديل هذا حسب الحاجة
+        $newAcademicYear->is_current = $request->is_active; // بشكل افتراضي، ليس عامًا حاليًا
+        $newAcademicYear->save();
+
+
+        $currentAcademicYear = AcademicYear::all()->toArray();
+        if (!$currentAcademicYear) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'لم يتم العثور على أي عام دراسي.'
+            ], 404);
+        }
+
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'تم إضافة العام الدراسي بنجاح.',
+            'data' =>  $currentAcademicYear,
+
+        ], 201);
     }
 }

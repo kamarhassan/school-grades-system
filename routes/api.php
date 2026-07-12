@@ -48,6 +48,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('sections', [SettingsController::class, 'index']);      // عرض الكل
         Route::post('sectionsStoreSetting', [SettingsController::class, 'store']);     // إضافة شعبة لصف
         
+        Route::post('SetCurrentSchoolYear/{id}', [SettingsController::class, 'SetCurrentSchoolYear']);      // عرض الكل
+        Route::get('CurrentSchoolYear', [SettingsController::class, 'currentschoolyear']);      // عرض الكل
+        Route::post('AddSchoolYear', [SettingsController::class, 'AddSchoolYear']);      // عرض الكل
 
     });
 });

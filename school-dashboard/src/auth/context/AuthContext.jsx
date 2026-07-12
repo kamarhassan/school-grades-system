@@ -30,12 +30,12 @@ export function AuthProvider({ children }) {
     const login = async (credentials) => {
     const response = await authService.login(credentials);
 
-    console.log("LOGIN RESPONSE:", response);
-    console.log("TOKEN:", response.token);
+    // console.log("LOGIN RESPONSE:", response);
+    // console.log("TOKEN:", response.token);
 
     localStorage.setItem("token", response.token);
 
-    console.log("STORED TOKEN:", localStorage.getItem("token"));
+    // console.log("STORED TOKEN:", localStorage.getItem("token"));
 
     await checkAuth();
 
