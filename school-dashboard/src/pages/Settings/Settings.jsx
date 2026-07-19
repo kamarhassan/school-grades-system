@@ -119,7 +119,7 @@ const Settings = () => {
                 </TabPanel>
 
                 <TabPanel value={tabValue} index={2}>
-                    <ClassesUndSection />
+                    <ClassesUndSection   settings={settings} onUpdate={fetchSettings}/>
                 </TabPanel>
 {/* 
                 <TabPanel value={tabValue} index={3}>

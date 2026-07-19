@@ -63,7 +63,7 @@ class ClassSeed extends Seeder
             // إنشاء الشعب للصف الحالي
             foreach ($sections as $sectionLetter) {
                 $sectionsData[] = [
-                    'section_name' => 'شعبة ' . $sectionLetter,
+                    'section_name' =>  $sectionLetter,
                     'class_id' => $classId,
                     'academic_year_id' => $academicYearId,
                     'supervisor_id' => null, // سيتم تعيينه لاحقاً

@@ -12,9 +12,9 @@ import {
     Typography,
 } from "@mui/material";
 
-import { addSchoolYear  } from "../../../../services/setting/currentyears.service";
+import { addSchoolYear } from "../../../../services/setting/currentyears.service";
 
-export default function AddNewYears({ refreshSchoolYears }){
+export default function AddNewYears({ refreshSchoolYears }) {
     const [open, setOpen] = React.useState(false);
 
     const [formData, setFormData] = React.useState({
@@ -47,8 +47,8 @@ export default function AddNewYears({ refreshSchoolYears }){
             console.log("Saved:", response);
 
             // handleClose();
-await refreshSchoolYears();
-handleClose();
+            await refreshSchoolYears();
+            handleClose();
             // تنظيف الحقول
             setFormData({
                 from: "",

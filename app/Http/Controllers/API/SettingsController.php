@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Section;
 use App\Models\AcademicYear;
+use App\Models\SchoolClass;
+use App\Models\Section;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -247,5 +248,80 @@ class SettingsController extends Controller
             'data' =>  $currentAcademicYear,
 
         ], 201);
+    }
+
+    public function sectiontoclass()
+    {
+        $classes = SchoolClass::with('sections')->get();
+
+        // الشُّعب الافتراضية المطلوبة من (أ) إلى (و)
+        $allAvailableSections = ['أ', 'ب', 'ج', 'د', 'هـ', 'و'];
+
+        // 2. معالجة البيانات وتحويلها للهيكل المطلوب بدقة
+        $response = $classes->map(function ($class) use ($allAvailableSections) {
+
+            // استخراج أسماء الشعب المسجلة فعلياً لهذا الصف في قاعدة البيانات وتحويلها لمصفوفة
+            $activeSectionNames = $class->sections->pluck('section_name')->toArray();
+
+            // بناء مصفوفة الشعب الستة ومعرفة هل هي مسجلة أم لا
+            $sectionsStructure = [];
+            foreach ($allAvailableSections as $sectionLetter) {
+                $sectionsStructure[] = [
+                    'name' => $sectionLetter,
+                    // إذا كان الحرف (مثل أ أو ب) موجوداً في المصفوفة القادمة من قاعدة البيانات، سيكون true
+                    'checked' => in_array($sectionLetter, $activeSectionNames)
+                ];
+            }
+
+            return [
+                'class_id' => $class->id,
+                'class_name' => $class->class_name, // استخدام اسم العمود الصحيح لديك
+                'sections' => $sectionsStructure
+            ];
+        });
+
+        return response()->json($response);
+    }
+
+    public function saveClassesSections(Request $request)
+    {
+        // التحقق من المدخلات (حسب الهيكل الذي تعتمده)
+        $request->validate([
+            '*' => 'required|array',
+            '*.class_id' => 'required|exists:school_classes,id',
+            '*.sections' => 'required|array'
+        ]);
+
+        // جلب المعرف الخاص بالسنة الدراسية الحالية من دالة المساعد لديك
+         $currentAcademicYearId = currentAcademicYearId();
+
+
+        foreach ($request->all() as $classData) {
+            $classId = $classData['class_id'];
+
+            foreach ($classData['sections'] as $section) {
+                $sectionName = $section['name'];
+                $isChecked = $section['checked'];
+
+                if ($isChecked) {
+                    // دمج الـ academic_year_id ضمن شروط البحث والإنشاء
+                    Section::firstOrCreate([
+                        'class_id'         => $classId,
+                        'section_name'     => $sectionName,
+                        'academic_year_id' => $currentAcademicYearId // إضافة الحقل المطلوب هنا ليتفادى الخطأ
+                    ], [
+                        'supervisor_id'    => null
+                    ]);
+                } else {
+                    // عند الحذف، يفضل أيضاً تحديد السنة الدراسية لحذف شعبة السنة الحالية فقط
+                    Section::where('class_id', $classId)
+                        ->where('section_name', $sectionName)
+                        ->where('academic_year_id', $currentAcademicYearId)
+                        ->delete();
+                }
+            }
+        }
+
+        return response()->json(['message' => 'تم تحديث الشعب بنجاح في قاعدة البيانات']);
     }
 }

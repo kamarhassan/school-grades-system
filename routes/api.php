@@ -26,6 +26,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::middleware('auth:sanctum')->group(function () {
+
     Route::get('classes', [SchoolClassController::class, 'index']);
 
     Route::get('/me', [AuthController::class, 'me']);
@@ -47,10 +48,15 @@ Route::middleware('auth:sanctum')->group(function () {
     route::prefix('settings')->group(function () {
         Route::get('sections', [SettingsController::class, 'index']);      // عرض الكل
         Route::post('sectionsStoreSetting', [SettingsController::class, 'store']);     // إضافة شعبة لصف
-        
         Route::post('SetCurrentSchoolYear/{id}', [SettingsController::class, 'SetCurrentSchoolYear']);      // عرض الكل
         Route::get('CurrentSchoolYear', [SettingsController::class, 'currentschoolyear']);      // عرض الكل
         Route::post('AddSchoolYear', [SettingsController::class, 'AddSchoolYear']);      // عرض الكل
+        Route::get('sectiontoclass', [SettingsController::class, 'sectiontoclass']);      // عرض الكل
+        Route::post('saveClassesSections', [SettingsController::class, 'saveClassesSections']);      // عرض الكل
+
+
+
+
 
     });
 });

@@ -24,11 +24,11 @@ export const API_ROUTES = {
   SetCurrentSchoolYear: `${API_BASE_URL}/settings/SetCurrentSchoolYear`,
   settings: `${API_BASE_URL}/settings/sections`,
   sectionsStoreSetting: `${API_BASE_URL}/settings/sectionsStoreSetting`,
-  getstudents: (examsId,classId, sectionId) =>  `${API_BASE_URL}/getstudents/${examsId}/${classId}/${sectionId}`
+  getstudents: (examsId,classId, sectionId) =>  `${API_BASE_URL}/getstudents/${examsId}/${classId}/${sectionId}`,
 
 
-
-
+sectiontoclass: `${API_BASE_URL}/settings/sectiontoclass`,
+savesectiontoclass: `${API_BASE_URL}/settings/saveClassesSections`,
 
 
 
