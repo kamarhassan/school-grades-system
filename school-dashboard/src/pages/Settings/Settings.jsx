@@ -13,6 +13,7 @@ import {
 import { getSettings } from "../../services/settings.services";
 import SupervisorSections from './SupervisorSections/SupervisorSections';
 import GeneralSettings from './GeneralSettings/GeneralSettings';
+import ClassesUndSection from './ClassesUndSection/ClassesUndSection';
 // import AcademicSettings from './AcademicSettings';
 // import NotificationSettings from './NotificationSettings';
 
@@ -117,10 +118,10 @@ const Settings = () => {
                     />
                 </TabPanel>
 
-                {/* <TabPanel value={tabValue} index={2}>
-                    <AcademicSettings settings={settings} onUpdate={fetchSettings} />
+                <TabPanel value={tabValue} index={2}>
+                    <ClassesUndSection />
                 </TabPanel>
-
+{/* 
                 <TabPanel value={tabValue} index={3}>
                     <NotificationSettings settings={settings} onUpdate={fetchSettings} />
                 </TabPanel> */}
