@@ -33,6 +33,7 @@ class RolesAndPermissionsSeeder extends Seeder
                 'classes',
                 'sections',
                 'subjects',
+                'view students',
                 'academic years',
                 'view reports',
             ],
@@ -61,7 +62,7 @@ class RolesAndPermissionsSeeder extends Seeder
         // 3. إنشاء الأذونات وتعيينها للأدوار
         foreach ($permissions as $roleName => $permissionNames) {
             $role = Role::where('name', $roleName)->where('guard_name', 'web')->first();
-            
+
             if ($role) {
                 foreach ($permissionNames as $permissionName) {
                     // إنشاء الصلاحية إذا لم تكن موجودة
@@ -69,7 +70,7 @@ class RolesAndPermissionsSeeder extends Seeder
                         'name' => $permissionName,
                         'guard_name' => 'web',
                     ]);
-                    
+
                     // تعيين الصلاحية للدور
                     $role->givePermissionTo($permission);
                 }
