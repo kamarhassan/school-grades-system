@@ -33,6 +33,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             SubjectPlanSeeder::class,
         ]);
+        $this->call([
+            Assessment_types::class,
+        ]);
 
     }
 }

@@ -468,20 +468,10 @@ const SupervisorSections = ({ data: initialData, onUpdate }) => {
     // ============================================
     // عرض حالات التحميل والأخطاء
     // ============================================
-    if (loading) {
+      if (loading) {
         return (
-            <Box sx={{ p: 3 }}>
-                <Grid container spacing={3}>
-                    {[1, 2, 3].map((item) => (
-                        <Grid item xs={12} key={item}>
-                            <Skeleton
-                                variant="rectangular"
-                                height={200}
-                                sx={{ borderRadius: 2 }}
-                            />
-                        </Grid>
-                    ))}
-                </Grid>
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
+                <CircularProgress />
             </Box>
         );
     }
@@ -517,6 +507,8 @@ const SupervisorSections = ({ data: initialData, onUpdate }) => {
         );
     }
 
+
+   
     // ============================================
     // عرض المكون الرئيسي
     // ============================================

@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\SchoolClassController;
 use App\Http\Controllers\Api\SectionController;
 use App\Http\Controllers\Api\SettingsController;
 use App\Http\Controllers\API\StudentsController;
+use App\Http\Controllers\Api\SubjectAssessmentSettingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -34,7 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     Route::get('getstudents/{exams}/{class_id}/{section_id}', [StudentsController::class, 'getStudentsByClassAndSection']);
-    
+
     Route::get('sections', [SectionController::class, 'index']);
 
     Route::post('grades/grid', [GradeController::class, 'getGradeGrid']);
@@ -54,9 +55,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('sectiontoclass', [SettingsController::class, 'sectiontoclass']);      // عرض الكل
         Route::post('saveClassesSections', [SettingsController::class, 'saveClassesSections']);      // عرض الكل
 
-
-
-
-
+        Route::get(
+            'exam-settings/{class}',
+            [SubjectAssessmentSettingController::class, 'index']
+        );
     });
 });
