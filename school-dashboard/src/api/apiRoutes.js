@@ -29,7 +29,8 @@ export const API_ROUTES = {
 
   sectiontoclass: `${API_BASE_URL}/settings/sectiontoclass`,
   savesectiontoclass: `${API_BASE_URL}/settings/saveClassesSections`,
-  examsettings: `${API_BASE_URL}/settings/exam-settings/2`,
+  examsettings: (classId) => `${API_BASE_URL}/settings/exam-settings/${classId}`,
+  examsetting_save: `${API_BASE_URL}/settings/exam-settings/save`,
 
 
 

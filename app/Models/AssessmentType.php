@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class AssessmentType extends Model
 {
-   protected $table = 'assessment_types';
+    protected $table = 'assessment_types';
 
     protected $fillable = [
         'name',
@@ -14,10 +14,10 @@ class AssessmentType extends Model
         'order_no'
     ];
 
-public function subjectAssessmentSettings()
-{
-    return $this->hasMany(
-        SubjectAssessmentSetting::class
-    );
-}
+    public function subjectAssessmentSettings()
+    {
+        return $this->hasMany(
+            SubjectAssessmentSetting::class
+        );
+    }
 }

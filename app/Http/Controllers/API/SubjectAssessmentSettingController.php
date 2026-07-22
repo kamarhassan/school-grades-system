@@ -77,7 +77,21 @@ class SubjectAssessmentSettingController extends Controller
      */
     public function store(Request $request)
     {
+
+// return response()->json([
+//             'message' => 'Assessment setting created',
+//             // 'date' => date(),
+//             'data' => $request->all()
+//         ], 201);
+
+
         $data = $request->validate([
+
+
+            // 'class_id' => [
+            //     'required',
+            //     'exists:school_classes,id'
+            // ],
 
             'class_subject_id' => [
                 'required',
@@ -96,6 +110,11 @@ class SubjectAssessmentSettingController extends Controller
 
         ]);
 
+// return response()->json([
+//             'message' => 'Assessment setting hkhkjhkhkhk',
+//             // 'date' => date(),
+//             'data' => $data
+//         ], 201);    
 
         $setting = SubjectAssessmentSetting::create($data);
 

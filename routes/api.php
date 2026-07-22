@@ -54,10 +54,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('AddSchoolYear', [SettingsController::class, 'AddSchoolYear']);      // عرض الكل
         Route::get('sectiontoclass', [SettingsController::class, 'sectiontoclass']);      // عرض الكل
         Route::post('saveClassesSections', [SettingsController::class, 'saveClassesSections']);      // عرض الكل
+        
+        Route::get('exam-settings/{class}',[SubjectAssessmentSettingController::class, 'index']); // عرض الكل
+        Route::post('exam-settings/save',[SubjectAssessmentSettingController::class, 'store']);
+            
+            // Route::post('saveClassesSections', [SettingsController::class, 'saveClassesSections']);      // عرض الكل
 
-        Route::get(
-            'exam-settings/{class}',
-            [SubjectAssessmentSettingController::class, 'index']
-        );
     });
 });
