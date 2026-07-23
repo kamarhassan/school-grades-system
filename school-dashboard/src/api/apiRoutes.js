@@ -32,7 +32,7 @@ export const API_ROUTES = {
   examsettings: (classId) => `${API_BASE_URL}/settings/exam-settings/${classId}`,
   examsetting_save: `${API_BASE_URL}/settings/exam-settings/save`,
 
-
+  assessmentstatus: `${API_BASE_URL}/settings/assessmentstatus`,
 
 
 

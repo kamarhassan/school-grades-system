@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\AssessmentType;
+use App\Models\ClassAssessmentType;
 use App\Models\ClassSubject;
 use App\Models\SubjectAssessmentSetting;
 use Illuminate\Http\Request;
@@ -14,63 +15,50 @@ class SubjectAssessmentSettingController extends Controller
      * Display a listing of the resource.
      */
     public function index($classId)
-{
-    $data = [];
+    {
+        // 1. جلب جميع أنواع التقييمات مع علاقة الصف المحدد لمعرفة حالته
+        $assessmentTypes = AssessmentType::with(['classAssessments' => function ($query) use ($classId) {
+            $query->where('class_id', $classId);
+        }])
+            ->orderBy('order_no')
+            ->get();
 
-    // جلب أنواع التقييم
-    $assessmentTypes = AssessmentType::orderBy('order_no')->get();
+        // 2. جلب مواد الصف مع علاقاتها
+        $subjects = ClassSubject::with(['subject', 'assessmentSettings'])
+            ->where('class_id', $classId)
+            ->get();
 
+        // 3. بناء هيكل البيانات
+        $data = $assessmentTypes->map(function ($assessmentType) use ($subjects) {
 
-    // جلب مواد الصف مرة واحدة
-    $subjects = ClassSubject::with([
-        'subject',
-        'assessmentSettings'
-    ])
-    ->where('class_id', $classId)
-    ->get();
+            // جلب سجل التفعيل الخاص بهذا الصف من العلاقة المجلوبة
+            $classAssessment = $assessmentType->classAssessments->first();
 
+            // تحديد حالة التفعيل: إذا كان هناك سجل نأخذ قيمته، وإلا نعتبره مفعلاً بشكل افتراضي (true)
+            $isActive = $classAssessment ? (bool) $classAssessment->is_active : true;
 
-    foreach ($assessmentTypes as $assessmentType) {
+            return [
+                'assessment_type_id' => $assessmentType->id,
+                'assessment_name'    => $assessmentType->name,
+                'is_active'          => $isActive, // <--- تم إضافة حالة التفعيل هنا
+                'subjects'           => $subjects->map(function ($item) use ($assessmentType) {
 
-        $data[] = [
+                    $setting = $item->assessmentSettings
+                        ->firstWhere('assessment_type_id', $assessmentType->id);
 
-            'assessment_type_id' => $assessmentType->id,
+                    return [
+                        'class_subject_id' => $item->id,
+                        'subject'          => $item->subject?->subject_name,
+                        'is_split'         => (bool) ($setting?->is_split ?? false),
+                    ];
+                })->values()
+            ];
+        });
 
-            'assessment_name' => $assessmentType->name,
-
-
-            'subjects' => $subjects->map(function ($item) use ($assessmentType) {
-
-
-                // جلب إعداد هذا التقييم لهذه المادة
-                $setting = $item->assessmentSettings
-                    ->where('assessment_type_id', $assessmentType->id)
-                    ->first();
-
-
-                return [
-
-                    'class_subject_id' => $item->id,
-
-                    'subject' => $item->subject?->subject_name,
-
-
-                    'is_split' => $setting
-                        ? (bool) $setting->is_split
-                        : false
-                ];
-
-            })->values()
-
-        ];
+        return response()->json([
+            'data' => $data
+        ]);
     }
-
-
-    return response()->json([
-        'data' => $data
-    ]);
-}
-
 
     /**
      * إنشاء إعداد جديد
@@ -78,11 +66,11 @@ class SubjectAssessmentSettingController extends Controller
     public function store(Request $request)
     {
 
-// return response()->json([
-//             'message' => 'Assessment setting created',
-//             // 'date' => date(),
-//             'data' => $request->all()
-//         ], 201);
+        // return response()->json([
+        //             'message' => 'Assessment setting created',
+        //             // 'date' => date(),
+        //             'data' => $request->all()
+        //         ], 201);
 
 
         $data = $request->validate([
@@ -110,11 +98,11 @@ class SubjectAssessmentSettingController extends Controller
 
         ]);
 
-// return response()->json([
-//             'message' => 'Assessment setting hkhkjhkhkhk',
-//             // 'date' => date(),
-//             'data' => $data
-//         ], 201);    
+        // return response()->json([
+        //             'message' => 'Assessment setting hkhkjhkhkhk',
+        //             // 'date' => date(),
+        //             'data' => $data
+        //         ], 201);    
 
         $setting = SubjectAssessmentSetting::create($data);
 
@@ -167,4 +155,9 @@ class SubjectAssessmentSettingController extends Controller
             'message' => 'Deleted successfully'
         ]);
     }
+
+
+
+
+
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\AssessmentController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\API\GradeController;
 use App\Http\Controllers\Api\SchoolClassController;
@@ -58,7 +59,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('exam-settings/{class}',[SubjectAssessmentSettingController::class, 'index']); // عرض الكل
         Route::post('exam-settings/save',[SubjectAssessmentSettingController::class, 'store']);
             
-            // Route::post('saveClassesSections', [SettingsController::class, 'saveClassesSections']);      // عرض الكل
+        Route::post('assessmentstatus', [AssessmentController::class, 'assessmentstatus']);      // عرض الكل
 
     });
 });

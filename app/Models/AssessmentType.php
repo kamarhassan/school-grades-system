@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\ClassAssessmentType;
+use App\Models\SubjectAssessmentSetting;
 use Illuminate\Database\Eloquent\Model;
 
 class AssessmentType extends Model
@@ -20,4 +22,9 @@ class AssessmentType extends Model
             SubjectAssessmentSetting::class
         );
     }
+    // داخل نموذج AssessmentType.php
+public function classAssessments()
+{
+    return $table = $this->hasMany(ClassAssessmentType::class, 'assessment_type_id');
+}
 }

@@ -293,7 +293,7 @@ class SettingsController extends Controller
         ]);
 
         // جلب المعرف الخاص بالسنة الدراسية الحالية من دالة المساعد لديك
-         $currentAcademicYearId = currentAcademicYearId();
+        $currentAcademicYearId = currentAcademicYearId();
 
 
         foreach ($request->all() as $classData) {
@@ -324,4 +324,7 @@ class SettingsController extends Controller
 
         return response()->json(['message' => 'تم تحديث الشعب بنجاح في قاعدة البيانات']);
     }
+
+
+   
 }

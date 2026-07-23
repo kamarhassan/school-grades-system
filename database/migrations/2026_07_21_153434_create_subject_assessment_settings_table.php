@@ -13,18 +13,18 @@ return new class extends Migration
     {
         Schema::create('subject_assessment_settings', function (Blueprint $table) {
             $table->id();
-         
-    $table->foreignId('class_subject_id')
-        ->constrained('class_subjects')
-        ->cascadeOnDelete();
 
-    $table->foreignId('assessment_type_id')
-        ->constrained('assessment_types')
-        ->cascadeOnDelete();
+            $table->foreignId('class_subject_id')
+                ->constrained('class_subjects')
+                ->cascadeOnDelete();
 
-    // هل يوجد تشعيب؟
-    $table->boolean('is_split')
-        ->default(false);
+            $table->foreignId('assessment_type_id')
+                ->constrained('assessment_types')
+                ->cascadeOnDelete();
+
+            // هل يوجد تشعيب؟
+            $table->boolean('is_split')
+                ->default(false);
 
             $table->timestamps();
         });

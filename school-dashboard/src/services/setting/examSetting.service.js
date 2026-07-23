@@ -9,3 +9,11 @@ export async function postexamSettings(data) {
     const response = await api.post(API_ROUTES.examsetting_save, data);
     return response.data;
 }
+
+
+
+export async function assessmentstatus(payload) {
+    // نرسل الـ payload مباشرة في Body الـ POST
+    const response = await api.post(API_ROUTES.assessmentstatus, payload);
+    return response.data;
+}
