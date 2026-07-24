@@ -13,6 +13,8 @@ class ClassAssessmentType extends Model
         'class_id',
         'assessment_type_id',
         'is_active',
+        'academic_year_id',
+
     ];
 
     protected $casts = [

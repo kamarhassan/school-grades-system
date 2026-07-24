@@ -25,6 +25,7 @@ class AssessmentController extends Controller
             [
                 'class_id'           => $validated['class_id'],
                 'assessment_type_id' => $validated['assessment_type_id'],
+                 'academic_year_id'   => currentAcademicYearId(), // افترض أن لديك دالة للحصول على السنة الدراسية الحالية
             ],
             [
                 'is_active'          => $validated['is_active'],

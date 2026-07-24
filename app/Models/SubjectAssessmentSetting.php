@@ -12,7 +12,8 @@ class SubjectAssessmentSetting extends Model
     protected $fillable = [
         'class_subject_id',
         'assessment_type_id',
-        'is_split'
+        'is_split',
+        'academic_year_id',
     ];
   public function assessmentType()
 {

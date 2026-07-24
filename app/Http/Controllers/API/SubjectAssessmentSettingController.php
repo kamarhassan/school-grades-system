@@ -14,52 +14,66 @@ class SubjectAssessmentSettingController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($classId)
-    {
-        // 1. جلب جميع أنواع التقييمات مع علاقة الصف المحدد لمعرفة حالته
-        $assessmentTypes = AssessmentType::with(['classAssessments' => function ($query) use ($classId) {
-            $query->where('class_id', $classId);
-        }])
-            ->orderBy('order_no')
-            ->get();
+  public function index($classId)
+{
+    $currentYearId = currentAcademicYearId();
 
-        // 2. جلب مواد الصف مع علاقاتها
-        $subjects = ClassSubject::with(['subject', 'assessmentSettings'])
-            ->where('class_id', $classId)
-            ->get();
+    $assessmentTypes = AssessmentType::with([
+        'classAssessments' => function ($query) use ($classId, $currentYearId) {
+            $query->where('class_id', $classId)
+                  ->where('academic_year_id', $currentYearId);
+        }
+    ])
+    ->orderBy('order_no')
+    ->get();
 
-        // 3. بناء هيكل البيانات
-        $data = $assessmentTypes->map(function ($assessmentType) use ($subjects) {
 
-            // جلب سجل التفعيل الخاص بهذا الصف من العلاقة المجلوبة
-            $classAssessment = $assessmentType->classAssessments->first();
+    $subjects = ClassSubject::with([
+        'subject',
+        'assessmentSettings' => function ($query) use ($currentYearId) {
+            $query->where('academic_year_id', $currentYearId);
+        }
+    ])
+    ->where('class_id', $classId)
+    ->get();
 
-            // تحديد حالة التفعيل: إذا كان هناك سجل نأخذ قيمته، وإلا نعتبره مفعلاً بشكل افتراضي (true)
-            $isActive = $classAssessment ? (bool) $classAssessment->is_active : true;
 
-            return [
-                'assessment_type_id' => $assessmentType->id,
-                'assessment_name'    => $assessmentType->name,
-                'is_active'          => $isActive, // <--- تم إضافة حالة التفعيل هنا
-                'subjects'           => $subjects->map(function ($item) use ($assessmentType) {
+    $data = $assessmentTypes->map(function ($assessmentType) use ($subjects) {
 
-                    $setting = $item->assessmentSettings
-                        ->firstWhere('assessment_type_id', $assessmentType->id);
+        $classAssessment = $assessmentType->classAssessments->first();
 
-                    return [
-                        'class_subject_id' => $item->id,
-                        'subject'          => $item->subject?->subject_name,
-                        'is_split'         => (bool) ($setting?->is_split ?? false),
-                    ];
-                })->values()
-            ];
-        });
+        return [
+            'assessment_type_id' => $assessmentType->id,
 
-        return response()->json([
-            'data' => $data
-        ]);
-    }
+            'assessment_name' => $assessmentType->name,
 
+            'is_active' => (bool) ($classAssessment?->is_active ?? false),
+
+            'subjects' => $subjects->map(function ($classSubject) use ($assessmentType) {
+
+                $setting = $classSubject->assessmentSettings
+                    ->where('assessment_type_id', $assessmentType->id)
+                    ->first();
+
+                return [
+                    'class_subject_id' => $classSubject->id,
+
+                    'subject' => $classSubject->subject?->subject_name,
+
+                    'is_split' => (bool) ($setting?->is_split ?? false),
+                ];
+
+            })->values()
+        ];
+
+    });
+
+
+    return response()->json([
+        'academic_year_id' => $currentYearId,
+        'data' => $data
+    ]);
+}
     /**
      * إنشاء إعداد جديد
      */
@@ -75,11 +89,6 @@ class SubjectAssessmentSettingController extends Controller
 
         $data = $request->validate([
 
-
-            // 'class_id' => [
-            //     'required',
-            //     'exists:school_classes,id'
-            // ],
 
             'class_subject_id' => [
                 'required',
@@ -103,6 +112,7 @@ class SubjectAssessmentSettingController extends Controller
         //             // 'date' => date(),
         //             'data' => $data
         //         ], 201);    
+        $data['academic_year_id'] = currentAcademicYearId();
 
         $setting = SubjectAssessmentSetting::create($data);
 
@@ -155,9 +165,4 @@ class SubjectAssessmentSettingController extends Controller
             'message' => 'Deleted successfully'
         ]);
     }
-
-
-
-
-
 }

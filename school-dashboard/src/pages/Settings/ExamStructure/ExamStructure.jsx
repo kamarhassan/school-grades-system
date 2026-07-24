@@ -238,6 +238,7 @@ export default function ExamStructure() {
                             >
                                 {/* <row> */}
                                 <Typography variant="h6">
+                                    {console.log("Exam Data:", exam.assessment_name)}
                                     {exam.assessment_name}
                                 </Typography>
 
