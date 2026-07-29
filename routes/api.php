@@ -40,10 +40,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('sections', [SectionController::class, 'index']);
 
     Route::post('grades/grid', [GradeController::class, 'getGradeGrid']);
-
+    
     Route::get('class-sections', [SectionController::class, 'getSectionsByClass']); // get section if class_id is provided in the request   
     Route::middleware('permission:edit grades')->post('/grades/save', [GradeController::class, 'saveGrades']);
-
+    
+    Route::post('saveAllGrades', [GradeController::class, 'saveAllGrades']);
 
 
 

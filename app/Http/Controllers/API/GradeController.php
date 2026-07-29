@@ -79,8 +79,12 @@ class GradeController extends Controller
     /**
      * حفظ ورصد العلامات بشكل جماعي (Bulk Update)
      */
-    public function saveGrades(Request $request)
+    public function saveAllGrades(Request $request)
     {
+
+return response()->json(['message' => 'تم حفظ ورصد العلامات بنجاح', 'data' => $request->all()]);
+
+
         $request->validate([
             'grades' => 'required|array',
             'grades.*.student_id' => 'required|exists:students,id',

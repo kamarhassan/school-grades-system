@@ -14,6 +14,9 @@ class SubjectAssessmentSetting extends Model
         'assessment_type_id',
         'is_split',
         'academic_year_id',
+         
+        'component_name',
+        'max_component_score',
     ];
   public function assessmentType()
 {

@@ -10,8 +10,8 @@ class ClassSubject extends Model
     protected $fillable = [
         'class_id',
         'subject_id',
-        'academic_year_id'
-    ];
+        'max_score',
+        'academic_year_id'   ];
 
     // public function subject()
     // {
@@ -25,6 +25,10 @@ class ClassSubject extends Model
             Subject::class,
             'subject_id'
         );
+    }
+    public function components()
+    {
+        return $this->hasMany(SubjectComponent::class, 'class_subject_id');
     }
     public function schoolClass()
     {

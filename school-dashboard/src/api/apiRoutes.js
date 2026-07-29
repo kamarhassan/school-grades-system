@@ -35,7 +35,7 @@ export const API_ROUTES = {
   assessmentstatus: `${API_BASE_URL}/settings/assessmentstatus`,
 ClassAssessmentsdata: `${API_BASE_URL}/settings/class-assessments`,
 
-
+saveAllGrades: `${API_BASE_URL}/saveAllGrades`
 
 
 };

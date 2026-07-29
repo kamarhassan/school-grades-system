@@ -4,159 +4,210 @@ import StudentsTable from "./components/table/StudentsTable";
 import { getClasses } from "../../services/classes.service";
 import { getSections, getstudents } from "../../services/sections.service";
 import { getClassAssessments } from "../../services/setting/examSetting.service";
-import { Box, CircularProgress } from '@mui/material';
+import { saveAllGrades } from "../../services/sections.service"; // 👈 Import save service
+import { Box, CircularProgress, Button, Paper } from "@mui/material";
+import SaveIcon from "@mui/icons-material/Save";
 
 function Students() {
-    const [classId, setClassId] = useState("");
-    const [classes, setClasses] = useState([]);
-    const [sections, setSections] = useState([]);
-    const [sectionId, setSectionId] = useState("");
-    const [examId, setExamId] = useState("");
-    const [exams, setExams] = useState([]);
-    const [students, setStudents] = useState([]);
-    const [subjects, setSubjects] = useState([]);
-    const [loading, setLoading] = useState(false);
+  const [classId, setClassId] = useState("");
+  const [classes, setClasses] = useState([]);
+  const [sections, setSections] = useState([]);
+  const [sectionId, setSectionId] = useState("");
+  const [examId, setExamId] = useState("");
+  const [exams, setExams] = useState([]);
+  const [students, setStudents] = useState([]);
+  const [subjects, setSubjects] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [saveLoading, setSaveLoading] = useState(false); // 👈 Button loading state
 
-    // 📌 جلب الصفوف فقط
-    useEffect(() => {
-        async function loadClasses() {
-            try {
-                setLoading(true);
-                const data = await getClasses();
-                // console.log("CLASSES FROM API:", data.data); // للتأكد
-                setClasses(data.data);
-                setLoading(false);
-            } catch (err) {
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        loadClasses();
-    }, []);
-
-    const handleClassChange = async (value) => {
-        setClassId(value);
-        setExamId(""); // reset exam
-        setSectionId(""); // reset section
-
-        try {
-            setLoading(true);
-            const data = await getSections(value);
-            setSections(data.data);
-            // console.log("SECTIONS FROM API:", data.data); // للتأكد
-            
-            // console.log(
-            //     "%c class is  " + value + " exam is " + examId + " section is " + sectionId,
-            //     "color: red; font-size: 40px; font-weight: bold;"
-            // );
-
-            const ClassAssessmentsdata = await getClassAssessments(value);
-            // console.log("EXAMS FROM API:", ClassAssessmentsdata.data); // للتأكد
-            setExams(ClassAssessmentsdata.data);
-
-            setLoading(false);
-        } catch (err) {
-            console.error(err);
-            setLoading(false);
-        }
-
-
-
-
-
-    };
-
-    const handleSectionChange = async (value) => {
-        setSectionId(value);
-
-        try {
-            setLoading(true);
-            // console.log(
-            //     "%c class is  " + classId + " exam is " + examId + " section is " + sectionId,
-            //     "color: red; font-size: 40px; font-weight: bold;"
-            // );
-            // يمكنك إضافة أي منطق إضافي هنا إذا لزم الأمر عند تغيير القسم
-            if (classId && examId ) {
-
-                const data = await getstudents(classId, value, examId);
-                setStudents(data.data.students);
-                setSubjects(data.data.subjects);
-
-                // console.log("STUDENTS FROM API:", data.data); // للتأكد
-            }
-            setLoading(false);
-        } catch (err) {
-            console.error(err);
-            setLoading(false);
-        }
-    };
-    const handleExamChange = async (value) => {
-        setExamId(value);
-        // setSectionId(""); // reset section
-        // console.log("Selected Section ID:", value); // للتأكد من قيمة sectionId
-
-        try {
-            setLoading(true);
-            //  console.log(
-            //     "%c class is  " + classId + " exam is " + examId + " section is " + sectionId,
-            //     "color: red; font-size: 40px; font-weight: bold;"
-            // );
-            // يمكنك إضافة أي منطق إضافي هنا إذا لزم الأمر عند تغيير القسم
-            if (classId && sectionId ) {
-
-                const data = await getstudents(classId, sectionId, value);
-                //  console.log("data", data.students);
-                // console.log("class", classId);
-                // console.log("section", sectionId);
-                // console.log("exam", examId);
-
-
-                 setStudents(data.data.students);
-                setSubjects(data.data.subjects);
-                // console.log("STUDENTS FROM API:", data.data); // للتأكد
-            }
-            setLoading(false);
-            // console.log("amskdm",classId,sectionId,examId)
-        } catch (err) {
-            console.error(err);
-            setLoading(false);
-        }
-    };
-    if (loading) {
-        return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
-                <CircularProgress />
-            </Box>
-        );
+  useEffect(() => {
+    async function loadClasses() {
+      try {
+        setLoading(true);
+        const data = await getClasses();
+        setClasses(data.data);
+      } catch (err) {
+        console.error("Error loading classes:", err);
+      } finally {
+        setLoading(false);
+      }
     }
-    return (
+    loadClasses();
+  }, []);
 
-        <div>
-            <StudentsFilters
-                classId={classId}
-                sectionId={sectionId}
-                sections={sections}
-                examId={examId}
-                classes={classes}
-                // sections={[]}
-                exams={exams}
-                onClassChange={handleClassChange}
-                onSectionChange={handleSectionChange}
-                onExamChange={handleExamChange}
-            />
+  const handleClassChange = async (value) => {
+    setClassId(value);
+    setExamId("");
+    setSectionId("");
+    try {
+      setLoading(true);
+      const data = await getSections(value);
+      setSections(data.data);
 
-            {classId && sectionId && examId && (
-                <StudentsTable
+      const classAssessmentsdata = await getClassAssessments(value);
+      setExams(classAssessmentsdata.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-                    students={students}
-                    subjects={subjects}
-                    examId={examId}
-                />
-            )}
-        </div>
+  const handleSectionChange = async (value) => {
+    setSectionId(value);
+    try {
+      if (classId && examId && value) {
+        setLoading(true);
+        const data = await getstudents(classId, value, examId);
+        setStudents(data.data.students);
+        setSubjects(data.data.subjects);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleExamChange = async (value) => {
+    setExamId(value);
+    try {
+      if (classId && sectionId && value) {
+        setLoading(true);
+        const data = await getstudents(classId, sectionId, value);
+        setStudents(data.data.students);
+        setSubjects(data.data.subjects);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 1. Local state update ONLY (No API calls here)
+  const handleGradeChange = (studentId, classSubjectId, componentId, newValue) => {
+    const targetSubject = subjects.find(
+      (sub) =>
+        sub.class_subject_id === classSubjectId &&
+        sub.subject_component_id === componentId
     );
+
+    if (!targetSubject) return;
+
+    const subjectKey = `subject_${targetSubject.id}`;
+
+    setStudents((prevStudents) =>
+      prevStudents.map((student) => {
+        if (student.id === studentId) {
+          return {
+            ...student,
+            [subjectKey]: newValue,
+          };
+        }
+        return student;
+      })
+    );
+  };
+
+  // 2. Send ALL data at once when "Save All" button is clicked
+  const handleSaveAll = async () => {
+    try {
+      setSaveLoading(true);
+
+      // Construct the complete JSON payload
+      const payload = {
+        class_id: classId,
+        section_id: sectionId,
+        exam_id: examId,
+        students: students.map((student) => ({
+          student_id: student.id,
+          grades: subjects.map((subject) => ({
+            class_subject_id: subject.class_subject_id,
+            subject_component_id: subject.subject_component_id,
+            grade: student[`subject_${subject.id}`] ?? null,
+          })),
+        })),
+      };
+
+      await saveAllGrades(payload);
+      alert("All grades saved successfully!");
+    } catch (err) {
+      console.error("Error saving grades:", err);
+      alert("Failed to save grades. Please try again.");
+    } finally {
+      setSaveLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  return (
+    <Box sx={{ pb: 10 }}>
+      <StudentsFilters
+        classId={classId}
+        sectionId={sectionId}
+        sections={sections}
+        examId={examId}
+        classes={classes}
+        exams={exams}
+        onClassChange={handleClassChange}
+        onSectionChange={handleSectionChange}
+        onExamChange={handleExamChange}
+      />
+
+      {classId && sectionId && examId && (
+        <>
+          <StudentsTable
+            students={students}
+            subjects={subjects}
+            examId={examId}
+            handleGradeChange={handleGradeChange}
+          />
+
+          {/* Fixed bottom bar with "Save All" button */}
+          <Paper
+            elevation={3}
+            sx={{
+              position: "fixed",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              p: 2,
+              display: "flex",
+              justifyContent: "flex-end",
+              bgcolor: "background.paper",
+              borderTop: "1px solid #ddd",
+              zIndex: 1100,
+            }}
+          >
+            <Button
+              variant="contained"
+              color="primary"
+              size="large"
+              startIcon={
+                saveLoading ? (
+                  <CircularProgress size={20} color="inherit" />
+                ) : (
+                  <SaveIcon />
+                )
+              }
+              onClick={handleSaveAll}
+              disabled={saveLoading || students.length === 0}
+            >
+              {saveLoading ? "Saving..." : "Save All Grades"}
+            </Button>
+          </Paper>
+        </>
+      )}
+    </Box>
+  );
 }
 
 export default Students;
