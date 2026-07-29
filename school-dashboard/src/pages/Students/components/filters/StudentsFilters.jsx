@@ -13,21 +13,7 @@ function StudentsFilters({
 }) {
   return (
     <Stack direction="row" spacing={4} sx={{ mb: 3 }}>
-  {/* EXAM */}
-      <FormControl fullWidth size="small">
-        <InputLabel>Exam</InputLabel>
-        <Select
-          value={examId}
-          label="Exam"
-          onChange={(e) => onExamChange(e.target.value)}
-        >
-          {exams.map((e) => (
-            <MenuItem key={e.id} value={e.id}>
-              {e.name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+
 
       {/* CLASS */}
       <FormControl fullWidth size="small">
@@ -46,8 +32,27 @@ function StudentsFilters({
         </Select>
       </FormControl>
 
-      {/* SECTION */}
+ {/* EXAM */}
       <FormControl fullWidth size="small" disabled={!classId}>
+        <InputLabel>Exam</InputLabel>
+        <Select
+          value={examId}
+          label="Exam"
+          // disabled={!classId}, is_active
+          onChange={(e) => onExamChange(e.target.value)}
+          >
+          {exams.map((e) => (
+            <MenuItem key={e.id} value={e.id}
+            disabled={e.is_active === 0}>
+              {e.name}
+              
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
+      {/* SECTION */}
+      <FormControl fullWidth size="small" disabled={!examId}>
         <InputLabel>Section</InputLabel>
         <Select
           value={sectionId}
@@ -63,6 +68,8 @@ function StudentsFilters({
       </FormControl>
 
     
+
+ 
     </Stack>
   );
 }

@@ -11,6 +11,9 @@ import {
 import StudentRow from "./StudentRow";
 
 function StudentsTable({ subjects = [], students = [] ,handleGradeChange }) {
+  console.log("subjects", subjects);
+    console.log("students", students);
+
   return (
     <TableContainer
             component={Paper}

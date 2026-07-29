@@ -80,47 +80,40 @@ class SubjectAssessmentSettingController extends Controller
     public function store(Request $request)
     {
 
-        // return response()->json([
-        //             'message' => 'Assessment setting created',
-        //             // 'date' => date(),
-        //             'data' => $request->all()
-        //         ], 201);
+       $data = $request->validate([
+        'class_subject_id' => [
+            'required',
+            'exists:class_subjects,id'
+        ],
+        'assessment_type_id' => [
+            'required',
+            'exists:assessment_types,id'
+        ],
+        'is_split' => [
+            'required',
+            'boolean'
+        ],
+    ]);
 
+    $data['academic_year_id'] = currentAcademicYearId();
 
-        $data = $request->validate([
+    // updateOrCreate looks for existing records matching the first array.
+    // If found, it updates them with the second array. If not, it creates a new record.
+    $setting = SubjectAssessmentSetting::updateOrCreate(
+        [
+            'class_subject_id'   => $data['class_subject_id'],
+            'assessment_type_id' => $data['assessment_type_id'],
+            'academic_year_id'   => $data['academic_year_id'],
+        ],
+        [
+            'is_split'           => $data['is_split'],
+        ]
+    );
 
-
-            'class_subject_id' => [
-                'required',
-                'exists:class_subjects,id'
-            ],
-
-            'assessment_type_id' => [
-                'required',
-                'exists:assessment_types,id'
-            ],
-
-            'is_split' => [
-                'required',
-                'boolean'
-            ],
-
-        ]);
-
-        // return response()->json([
-        //             'message' => 'Assessment setting hkhkjhkhkhk',
-        //             // 'date' => date(),
-        //             'data' => $data
-        //         ], 201);    
-        $data['academic_year_id'] = currentAcademicYearId();
-
-        $setting = SubjectAssessmentSetting::create($data);
-
-
-        return response()->json([
-            'message' => 'Assessment setting created',
-            'data' => $setting
-        ], 201);
+    return response()->json([
+        'message' => 'Assessment setting saved successfully',
+        'data'    => $setting
+    ], 200);
     }
 
 
@@ -163,6 +156,39 @@ class SubjectAssessmentSettingController extends Controller
 
         return response()->json([
             'message' => 'Deleted successfully'
+        ]);
+    }
+
+
+
+
+      public function getClassAssessments(Request $request)
+    {
+        $request->validate([
+            'class_id' => 'required|exists:school_classes,id',
+        ]);
+
+        $academicYearId = currentAcademicYearId();
+
+        $assessments = AssessmentType::leftJoin('class_assessment_types as cat', function ($join) use ($request, $academicYearId) {
+
+            $join->on('assessment_types.id', '=', 'cat.assessment_type_id')
+                ->where('cat.class_id', $request->class_id)
+                ->where('cat.academic_year_id', $academicYearId);
+        })
+            ->select(
+                'assessment_types.id',
+                'assessment_types.name',
+                'assessment_types.order_no'
+            )
+            ->selectRaw('COALESCE(cat.is_active,0) as is_active')
+            ->orderBy('assessment_types.order_no')
+            ->get();
+
+        return response()->json([
+            'academic_year_id' => $academicYearId,
+            'class_id' => $request->class_id,
+            'data' => $assessments
         ]);
     }
 }

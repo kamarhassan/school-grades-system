@@ -60,6 +60,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('exam-settings/save',[SubjectAssessmentSettingController::class, 'store']);
             
         Route::post('assessmentstatus', [AssessmentController::class, 'assessmentstatus']);      // عرض الكل
-
+Route::post('class-assessments', [SubjectAssessmentSettingController::class, 'getClassAssessments']);
     });
 });

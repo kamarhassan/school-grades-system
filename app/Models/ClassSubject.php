@@ -36,11 +36,11 @@ class ClassSubject extends Model
     {
         return $this->belongsTo(AcademicYear::class);
     }
+   
+   
+
     public function assessmentSettings()
     {
-        return $this->hasMany(
-            SubjectAssessmentSetting::class,
-            'class_subject_id'
-        );
+        return $this->hasMany(SubjectAssessmentSetting::class);
     }
 }

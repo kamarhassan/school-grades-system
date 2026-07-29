@@ -24,7 +24,7 @@ export const API_ROUTES = {
   SetCurrentSchoolYear: `${API_BASE_URL}/settings/SetCurrentSchoolYear`,
   settings: `${API_BASE_URL}/settings/sections`,
   sectionsStoreSetting: `${API_BASE_URL}/settings/sectionsStoreSetting`,
-  getstudents: (examsId, classId, sectionId) => `${API_BASE_URL}/getstudents/${examsId}/${classId}/${sectionId}`,
+  getstudents: ( classId, sectionId, examsId) => `${API_BASE_URL}/getstudents/${classId}/${sectionId}/${examsId}`,
 
 
   sectiontoclass: `${API_BASE_URL}/settings/sectiontoclass`,
@@ -33,7 +33,7 @@ export const API_ROUTES = {
   examsetting_save: `${API_BASE_URL}/settings/exam-settings/save`,
 
   assessmentstatus: `${API_BASE_URL}/settings/assessmentstatus`,
-
+ClassAssessmentsdata: `${API_BASE_URL}/settings/class-assessments`,
 
 
 

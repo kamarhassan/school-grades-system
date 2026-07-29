@@ -15,8 +15,9 @@ class Student extends Model
     }
 
     // الطالب لديه علامات متعددة مرصودة
+   
     public function grades()
-    {
-        return $this->hasMany(Grade::class, 'student_id');
-    }
+{
+    return $this->hasMany(Grade::class);
+}
 }

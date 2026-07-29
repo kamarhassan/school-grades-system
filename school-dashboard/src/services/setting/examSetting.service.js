@@ -17,3 +17,10 @@ export async function assessmentstatus(payload) {
     const response = await api.post(API_ROUTES.assessmentstatus, payload);
     return response.data;
 }
+
+
+
+export async function getClassAssessments(classId) {
+    const response = await api.post(API_ROUTES.ClassAssessmentsdata,{class_id: classId,/* فقط لحل مشكلة تغيير الاسم من bacend < frontend*/});
+    return response.data;
+}

@@ -37,5 +37,9 @@ class DatabaseSeeder extends Seeder
             Assessment_types::class,
         ]);
 
+        $this->call([
+        SubjectComponentSeeder::class,
+    ]);
+
     }
 }

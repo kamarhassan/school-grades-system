@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\AssessmentType;
 use App\Models\ClassAssessmentType;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,7 @@ class AssessmentController extends Controller
     {
 
 
-       
+
         // 1. التحقق من صحة البيانات المدخلة
         $validated = $request->validate([
             'class_id'           => 'required|exists:school_classes,id',
@@ -25,7 +26,7 @@ class AssessmentController extends Controller
             [
                 'class_id'           => $validated['class_id'],
                 'assessment_type_id' => $validated['assessment_type_id'],
-                 'academic_year_id'   => currentAcademicYearId(), // افترض أن لديك دالة للحصول على السنة الدراسية الحالية
+                'academic_year_id'   => currentAcademicYearId(), // افترض أن لديك دالة للحصول على السنة الدراسية الحالية
             ],
             [
                 'is_active'          => $validated['is_active'],
@@ -38,4 +39,9 @@ class AssessmentController extends Controller
             'data'    => $classAssessment
         ], 200);
     }
+
+
+
+
+  
 }

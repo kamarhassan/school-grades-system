@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 
 use App\Http\Controllers\Controller;
+use App\Models\ClassSubject;
 use App\Models\ClassSubjectPlan;
 use App\Models\Student;
 
@@ -11,98 +12,210 @@ use App\Models\Student;
 class StudentsController extends Controller
 {
 
-
-    public function getStudentsByClassAndSection($examId, $classId, $sectionId)
-    {
-        // السنة الدراسية الحالية
-        $currentAcademicYearId = currentAcademicYearId();
+  public function getStudentsByClassAndSection($classId, $sectionId, $examId)
+{
+    $academicYearId = currentAcademicYearId();
 
 
-        // المواد الخاصة بالصف
-        $subjectPlans = ClassSubjectPlan::where('class_id', $classId)
-            ->where('academic_year_id', $currentAcademicYearId)
-            ->with('subject:id,subject_name')
-            ->get();
+    /*
+    |--------------------------------------------------------------------------
+    | المواد الخاصة بالصف مع التشعيبات
+    |--------------------------------------------------------------------------
+    */
+
+    $subjects = ClassSubject::where('class_id', $classId)
+        ->where('academic_year_id', $academicYearId)
+        ->with([
+
+            'subject.components' => function ($q) use ($examId) {
+
+                $q->where('assessment_type_id', $examId);
+
+            },
+
+            'assessmentSettings' => function ($q) use ($examId) {
+
+                $q->where('assessment_type_id', $examId);
+
+            }
+
+        ])
+        ->get();
 
 
-        // الطلاب مع العلامات
-        $students = Student::where('section_id', $sectionId)
-            ->with('grades')
-            ->get([
-                'id',
-                'student_name'
-            ]);
+
+    /*
+    |--------------------------------------------------------------------------
+    | الطلاب
+    |--------------------------------------------------------------------------
+    */
+
+    $students = Student::where('section_id', $sectionId)
+        ->with([
+
+            'grades' => function ($q) use ($examId) {
+
+                $q->where('assessment_type_id', $examId);
+
+            }
+
+        ])
+        ->get();
 
 
-        $formattedStudents = $students->map(function ($student) use ($subjectPlans, $examId) {
 
-            $studentGrades = $student->grades
-                ->keyBy('class_subject_plan_id');
+    /*
+    |--------------------------------------------------------------------------
+    | تجهيز المواد للجدول
+    |--------------------------------------------------------------------------
+    */
 
-
-            $row = [
-                'id' => $student->id,
-                'student_name' => $student->student_name,
-            ];
+    $tableSubjects = collect();
 
 
-            foreach ($subjectPlans as $plan) {
-
-                $existingGrade = $studentGrades->get($plan->id);
-
-                $score = null;
+    foreach ($subjects as $subject) {
 
 
-                if ($existingGrade) {
-
-                    switch ($examId) {
-
-                        // السعي الأول
-                        case 1:
-                            $score = $existingGrade->sai_score;
-                            break;
-
-                        // السعي الثاني
-                        case 2:
-                            $score = $existingGrade->sai_score;
-                            break;
-
-                        // امتحان الفصل الأول
-                        case 3:
-                            $score = $existingGrade->exam_term_1;
-                            break;
-
-                        // امتحان الفصل الثاني
-                        case 4:
-                            $score = $existingGrade->exam_term_2;
-                            break;
-                    }
-                }
+        $isSplit = $subject->assessmentSettings
+            ->first()?->is_split ?? false;
 
 
-                // إنشاء عمود لكل مادة
-                $row["subject_" . $plan->id] = $score;
+
+        // مادة مشعبة
+        if ($isSplit && $subject->subject->components->count()) {
+
+
+            foreach ($subject->subject->components as $component) {
+
+
+                $tableSubjects->push([
+
+                    'id' => $subject->id . '_' . $component->id,
+
+                    'class_subject_id' => $subject->id,
+
+                    'subject_component_id' => $component->id,
+
+                    'name' =>
+                        $subject->subject->subject_name
+                        . ' - '
+                        . $component->component_name,
+
+
+                    'is_component' => true
+
+                ]);
+
             }
 
 
-            return $row;
-        });
+        } else {
 
 
-        return response()->json([
+            // مادة عادية
 
-            'success' => true,
+            $tableSubjects->push([
 
-            'subjects' => $subjectPlans->map(function ($plan) {
+                'id' => $subject->id,
 
-                return [
-                    'id' => $plan->id,
-                    'name' => $plan->subject->subject_name
-                ];
-            }),
+                'class_subject_id' => $subject->id,
 
-            'data' => $formattedStudents
+                'subject_component_id' => null,
 
-        ]);
+                'name' => $subject->subject->subject_name,
+
+                'is_component' => false
+
+            ]);
+
+        }
+
     }
+
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | تجهيز الطلاب
+    |--------------------------------------------------------------------------
+    */
+
+    $data = $students->map(function ($student) use ($tableSubjects) {
+
+
+        $row = [
+
+            'id' => $student->id,
+
+            'student_name' => $student->student_name,
+
+        ];
+
+
+
+        foreach ($tableSubjects as $subject) {
+
+
+
+            $gradeQuery = $student->grades
+                ->where(
+                    'class_subject_id',
+                    $subject['class_subject_id']
+                );
+
+
+
+            // إذا كان لها تشعيب
+
+            if ($subject['subject_component_id']) {
+
+
+                $grade = $gradeQuery
+                    ->where(
+                        'subject_component_id',
+                        $subject['subject_component_id']
+                    )
+                    ->first();
+
+
+            } else {
+
+
+                // مادة عادية
+
+                $grade = $gradeQuery
+                    ->whereNull('subject_component_id')
+                    ->first();
+
+            }
+
+
+
+            $row[
+                'subject_' . $subject['id']
+            ] = $grade?->score;
+
+
+        }
+
+
+        return $row;
+
+    });
+
+
+
+    return response()->json([
+
+
+        'success' => true,
+
+'data' => [
+            'subjects' => $tableSubjects,
+            'students' => $data
+        ]
+    ]);
 }
+}       
+

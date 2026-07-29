@@ -13,4 +13,11 @@ class Subject extends Model
     {
         return $this->hasMany(ClassSubjectPlan::class, 'subject_id');
     }
+    public function components()
+{
+    return $this->hasMany(
+        SubjectComponent::class,
+        'subject_id'
+    );
+}
 }

@@ -4,15 +4,14 @@ import GradeCell from "./GradeCell";
 function StudentRow({ student, subjects, handleGradeChange }) {
 
     return (
-        <TableRow   >
+        <TableRow>
 
-          
             <TableCell
-                 align="center"
-            sx={{
-                padding: "8px",
-                borderBottom: "1px solid #ddd"
-            }}
+                align="center"
+                sx={{
+                    padding: "8px",
+                    borderBottom: "1px solid #ddd"
+                }}
             >
                 {student.student_name}
             </TableCell>
@@ -21,15 +20,32 @@ function StudentRow({ student, subjects, handleGradeChange }) {
             {subjects.map((subject) => (
 
                 <GradeCell
+
                     key={subject.id}
-                    grade={student[`subject_${subject.id}`]}
-                    onChange={(value) =>
-                        handleGradeChange(
-                            student.id,
-                            subject.id,
-                            value
-                        )
+
+                    grade={
+                        student[`subject_${subject.id}`] ?? ""
                     }
+
+
+                    onChange={(value)=>
+
+
+                        handleGradeChange(
+
+                            student.id,
+
+                            subject.class_subject_id,
+
+                            subject.subject_component_id,
+
+                            value
+
+                        )
+
+
+                    }
+
                 />
 
             ))}
