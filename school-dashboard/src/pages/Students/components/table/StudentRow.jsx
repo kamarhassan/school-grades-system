@@ -25,6 +25,7 @@ function StudentRow({
           key={subject.id}
           grade={student[`subject_${subject.id}`] ?? ""}
           rowIndex={rowIndex}
+          maxScore={subject.max_score}
           colIndex={colIndex}
           onKeyDownEnter={onKeyDownEnter}
           onChange={(value) =>

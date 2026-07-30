@@ -40,10 +40,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('sections', [SectionController::class, 'index']);
 
     Route::post('grades/grid', [GradeController::class, 'getGradeGrid']);
-    
+
     Route::get('class-sections', [SectionController::class, 'getSectionsByClass']); // get section if class_id is provided in the request   
     Route::middleware('permission:edit grades')->post('/grades/save', [GradeController::class, 'saveGrades']);
-    
+
     Route::post('saveAllGrades', [GradeController::class, 'saveAllGrades']);
 
 
@@ -56,11 +56,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('AddSchoolYear', [SettingsController::class, 'AddSchoolYear']);      // عرض الكل
         Route::get('sectiontoclass', [SettingsController::class, 'sectiontoclass']);      // عرض الكل
         Route::post('saveClassesSections', [SettingsController::class, 'saveClassesSections']);      // عرض الكل
-        
-        Route::get('exam-settings/{class}',[SubjectAssessmentSettingController::class, 'index']); // عرض الكل
-        Route::post('exam-settings/save',[SubjectAssessmentSettingController::class, 'store']);
-            
+
+        Route::get('exam-settings/{class}', [SubjectAssessmentSettingController::class, 'index']); // عرض الكل
+        Route::post('exam-settings/save', [SubjectAssessmentSettingController::class, 'store']);
+
         Route::post('assessmentstatus', [AssessmentController::class, 'assessmentstatus']);      // عرض الكل
-Route::post('class-assessments', [SubjectAssessmentSettingController::class, 'getClassAssessments']);
+        Route::post('class-assessments', [SubjectAssessmentSettingController::class, 'getClassAssessments']);
     });
 });

@@ -8,17 +8,24 @@ import App from "./App";
 import theme from "./theme/theme";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./auth/context/AuthContext";
- 
+import { SnackbarProvider } from 'notistack'; // ✅ الصحيح
+
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <ThemeProvider theme={theme}>
-    <CssBaseline />
-   <BrowserRouter>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
-    </BrowserRouter>
-  </ThemeProvider>
+    <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <SnackbarProvider
+            maxSnack={3}
+            anchorOrigin={{ vertical: "top", horizontal: "right" }}
+            autoHideDuration={3000}
+        >
+            <BrowserRouter>
+                <AuthProvider>
+                    <App />
+                </AuthProvider>
+            </BrowserRouter>
+        </SnackbarProvider>
+    </ThemeProvider>,
 );
 
 /*
