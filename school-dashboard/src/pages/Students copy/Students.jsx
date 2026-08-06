@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-// import StudentsFilters from "./components/filters/StudentsFilters";
-import StudentsFilters from "../../components/StudentsFilter/StudentsFilters";
+import StudentsFilters from "./components/filters/StudentsFilters";
 import StudentsTable from "./components/table/StudentsTable";
 import { getClasses } from "../../services/classes.service";
 import { getSections, getstudents } from "../../services/sections.service";
@@ -20,8 +19,20 @@ function Students() {
     const [subjects, setSubjects] = useState([]);
     const [loading, setLoading] = useState(false);
     const [saveLoading, setSaveLoading] = useState(false); // 👈 Button loading state
-    const { enqueueSnackbar } = useSnackbar();
-    
+const { enqueueSnackbar } = useSnackbar();
+    // const [toast, setToast] = useState({
+    //     open: false,
+    //     message: "",
+    //     type: "success",
+    // });
+
+    // const showToast = (message, type = "success") => {
+    //     setToast({ open: true, message, type });
+    // };
+
+    // const handleCloseToast = () => {
+    //     setToast((prev) => ({ ...prev, open: false }));
+    // };
 
     useEffect(() => {
         async function loadClasses() {
@@ -139,13 +150,13 @@ function Students() {
             };
 
             await saveAllGrades(payload);
-            enqueueSnackbar('الرسالة الحالية', { variant: 'success', preventDuplicate: true });
+           enqueueSnackbar('الرسالة الحالية', { variant: 'success', preventDuplicate: true });
         } catch (err) {
             console.error("Error saving grades:", err);
             enqueueSnackbar('Failed to save grades. Please try again.', { variant: 'error', preventDuplicate: true });
         } finally {
             setSaveLoading(false);
-
+           
         }
     };
 

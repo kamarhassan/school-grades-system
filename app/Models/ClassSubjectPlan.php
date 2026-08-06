@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class ClassSubjectPlan extends Model
 {
 
-
-    protected $fillable = [
+protected $table = 'class_subjects';
+  
+protected $fillable = [
         'class_id',
         'subject_id',
         'max_first_term',

@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\ClassSubject;
 use App\Models\ClassSubjectPlan;
 use App\Models\Grade;
 use App\Models\Section;
 use App\Models\Student;
+use App\Models\SubjectComponent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -81,54 +83,88 @@ class GradeController extends Controller
      */
     public function saveAllGrades(Request $request)
     {
-
-return response()->json(['message' => 'تم حفظ ورصد العلامات بنجاح', 'data' => $request->all()]);
-
-
+        // return response()->json(['data' => $request->all()]);
+        // 1. التثبت من البيانات المرسلة
         $request->validate([
-            'grades' => 'required|array',
-            'grades.*.student_id' => 'required|exists:students,id',
-            'grades.*.plan_id' => 'required|exists:class_subject_plans,id',
-            'grades.*.term' => 'required|in:first_term,second_term,final',
-            'grades.*.score' => 'nullable|numeric|min:0',
+            'exam_id' => 'required|exists:assessment_types,id',
+            'students' => 'required|array',
+            'students.*.student_id' => 'required|exists:students,id',
+            'students.*.grades' => 'required|array',
         ]);
 
         $user = Auth::user();
 
-        // التحقق الإجمالي من صلاحية التعديل
         if (!$user->hasPermissionTo('edit grades')) {
             return response()->json(['error' => 'لا تملك صلاحية تعديل ورصد العلامات.'], 403);
         }
 
-        foreach ($request->grades as $item) {
-            $plan = ClassSubjectPlan::findOrFail($item['plan_id']);
-            $student = Student::findOrFail($item['student_id']);
+        $assessmentTypeId = $request->input('exam_id');
 
-            // حماية إضافية للناظر للتأكد من أن الطالب يتبع شعبة يشرف عليها
+        foreach ($request->students as $studentData) {
+            $studentId = $studentData['student_id'] ?? null;
+            if (!$studentId) continue;
+
+            $student = Student::find($studentId);
+            if (!$student) continue;
+
+            // حماية الناظر / المشرف
             if ($user->hasRole('supervisor')) {
                 $section = Section::find($student->section_id);
-                if ($section->supervisor_id !== $user->id) {
-                    continue; // تخطي السجل غير المصرح به
+                if (!$section || $section->supervisor_id !== $user->id) {
+                    continue;
                 }
             }
 
-            // التحقق من السقف الكلي والتأكد أن الجزء (السعي) مفعل حالياً من الإدارة
-            if ($item['term'] == 'first_term') {
-                if (!$plan->is_first_term_active || $item['score'] > $plan->max_first_term) return response()->json(['error' => "العلامة تتجاوز الحد الأقصى أو أن الفصل الدراسي مجمد للمادة: {$plan->id}"], 422);
-                $field = 'first_term_score';
-            } elseif ($item['term'] == 'second_term') {
-                if (!$plan->is_second_term_active || $item['score'] > $plan->max_second_term) return response()->json(['error' => "العلامة تتجاوز الحد الأقصى أو أن الفصل الدراسي مجمد للمادة: {$plan->id}"], 422);
-                $field = 'second_term_score';
-            } else {
-                if (!$plan->is_final_active || $item['score'] > $plan->max_final) return response()->json(['error' => "العلامة تتجاوز الحد الأقصى أو أن الامتحان النهائي مجمد للمادة: {$plan->id}"], 422);
-                $field = 'final_score';
-            }
+           foreach ($studentData['grades'] as $item) {
+    $score = $item['grade'] ?? null;
 
-            // تحديث السجل أو إنشائه إن لم يكن موجوداً
-            Grade::updateOrCreate(
-                ['student_id' => $item['student_id'], 'plan_id' => $item['plan_id']],
-                [$field => $item['score']]
-            );
+    // 🛑 1. تخطي العلامات الفارغة (null أو "")
+    if (is_null($score) || $score === '') {
+        continue;
+    }
+
+    $classSubjectId = $item['class_subject_id'] ?? null;
+    if (!$classSubjectId) continue;
+
+    $classSubject = ClassSubject::with('subject')->find($classSubjectId);
+    if (!$classSubject) continue;
+
+    $studentName = $student->student_name ?? "الطالب رقم {$student->id}";
+    $subjectName = $classSubject->subject->subject_name ?? "المادة رقم {$classSubject->id}";
+
+    // 🛑 2. رفض العلامات السالبة
+    if (!is_numeric($score) || (float) $score < 0) {
+        return response()->json([
+            'error' => "العلامة المدخلة ({$score}) للطالب ({$studentName}) في المادة ({$subjectName}) غير صالحة. لا يمكن إدخال علامة سالبة."
+        ], 422);
+    }
+
+    // 🛑 3. التحقق من السقف الأعلى للمكون (إذا وجد)
+    $componentId = $item['subject_component_id'] ?? null;
+    if ($componentId) {
+        $component = SubjectComponent::find($componentId);
+        if ($component && $score > $component->max_component_score) {
+            return response()->json([
+                'error' => "العلامة المدخلة ({$score}) للطالب ({$studentName}) في الجزء ({$component->component_name}) تتجاوز الحد الأقصى وهو ({$component->max_component_score})."
+            ], 422);
+        }
+    }
+
+                // 🛑 3. البحث والتحديث الآمن مع دعم الحقول التي تقبل null
+                $attributes = [
+                    'student_id'           => (int) $studentId,
+                    'class_subject_id'     => (int) $classSubjectId,
+                    'assessment_type_id'   => (int) $assessmentTypeId,
+                    'subject_component_id' => $componentId ? (int) $componentId : null,
+                ];
+
+                // نحدد القيم المراد حفظها في حال التحديث أو الإنشاء
+                $values = [
+                    'score' => $score,
+                ];
+
+                Grade::updateOrCreate($attributes, $values);
+            }
         }
 
         return response()->json(['message' => 'تم حفظ ورصد العلامات بنجاح']);

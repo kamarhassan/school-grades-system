@@ -4,7 +4,7 @@ import MainLayout from "../layouts/MainLayout";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import Students from "../pages/Students/Students";
 import Settings from "../pages/Settings/Settings";
-import StudentsReports from "../pages/Reports/StudentsReports";
+import StudentsReports from "../pages/MarkReports/StudentsReports";
 import Login from "../pages/Login/Login";
 import ProtectedRoute from "./ProtectedRoute";
 function AppRoutes() {
