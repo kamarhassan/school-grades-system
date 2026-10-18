@@ -22,14 +22,9 @@ function Students() {
     const [subjects, setSubjects] = useState([]);
     const [loading, setLoading] = useState(false);
     const [saveLoading, setSaveLoading] = useState(false); // 👈 Button loading state
-<<<<<<< HEAD
-const { enqueueSnackbar } = useSnackbar();
-   
-=======
-    const { enqueueSnackbar } = useSnackbar();
-    
 
->>>>>>> 5e4ebb1d52cf4c45ddee1d8804322c1715c945c0
+const { enqueueSnackbar } = useSnackbar();
+
     useEffect(() => {
         async function loadClasses() {
             try {
