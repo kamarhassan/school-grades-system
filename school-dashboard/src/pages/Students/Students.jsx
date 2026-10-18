@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import StudentsFilters from "./components/filters/StudentsFilters";
+// import StudentsFilters from "./components/filters/StudentsFilters";
+import StudentsFilters from "../../components/StudentsFilter/StudentsFilters";
 import StudentsTable from "./components/table/StudentsTable";
 import { getClasses } from "../../services/classes.service";
 import { getSections, getstudents } from "../../services/sections.service";
@@ -21,8 +22,14 @@ function Students() {
     const [subjects, setSubjects] = useState([]);
     const [loading, setLoading] = useState(false);
     const [saveLoading, setSaveLoading] = useState(false); // 👈 Button loading state
+<<<<<<< HEAD
 const { enqueueSnackbar } = useSnackbar();
    
+=======
+    const { enqueueSnackbar } = useSnackbar();
+    
+
+>>>>>>> 5e4ebb1d52cf4c45ddee1d8804322c1715c945c0
     useEffect(() => {
         async function loadClasses() {
             try {
@@ -139,13 +146,13 @@ const { enqueueSnackbar } = useSnackbar();
             };
 
             await saveAllGrades(payload);
-           enqueueSnackbar('الرسالة الحالية', { variant: 'success', preventDuplicate: true });
+            enqueueSnackbar('الرسالة الحالية', { variant: 'success', preventDuplicate: true });
         } catch (err) {
             console.error("Error saving grades:", err);
             enqueueSnackbar('Failed to save grades. Please try again.', { variant: 'error', preventDuplicate: true });
         } finally {
             setSaveLoading(false);
-           
+
         }
     };
 

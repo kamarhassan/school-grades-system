@@ -9,9 +9,13 @@ function GradeCell({
   onKeyDownEnter,
 }) {
   const numericGrade = Number(grade);
-  
+
   // التحقق من الخطأ (أكبر من الحد الأقصى أو أقل من الصفر)
-  const hasError = grade !== "" && grade !== null && (numericGrade > maxScore || numericGrade < 0);
+  const hasError =
+    grade !== "" &&
+    grade !== null &&
+    grade !== undefined &&
+    (numericGrade > maxScore || numericGrade < 0);
 
   const handleKeyDown = (e) => {
     // منع الفاصلة العادية (,) والإشارات (+ / -) والأحرف النصية (e/E)
@@ -30,8 +34,14 @@ function GradeCell({
   const handleChange = (e) => {
     const val = e.target.value;
 
-    // يسمح بالأرقام والنقطة العشرية فقط، مع التأكد من عدم تجاوز maxScore
-    if (val === "" || val === "." || Number(val) <= maxScore) {
+    // 1. السماح بالحذف (قيمة فارغة)
+    if (val === "") {
+      onChange(val);
+      return;
+    }
+
+    // 2. السماح بكتابة أي رقم أو نقطة عشرية (السماح بالتجاوز ليظهر الخطأ باللون الأحمر)
+    if (!isNaN(val) || val === ".") {
       onChange(val);
     }
   };
@@ -44,12 +54,12 @@ function GradeCell({
         value={grade ?? ""}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-        error={hasError}
+        error={hasError} // سيقوم MUI بتلوين الحقل باللون الأحمر إذا كان hasError = true
         id={`grade-input-${rowIndex}-${colIndex}`}
         inputProps={{
           min: 0,
           max: maxScore,
-          step: "any", // 👈 للسماح بالأرقام العشرية مثل 10.26
+          step: "any", // للسماح بالأرقام العشرية مثل 10.26
         }}
         sx={{
           width: 80,

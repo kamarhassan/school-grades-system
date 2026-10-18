@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+<<<<<<< HEAD
 use App\Http\Requests\SaveAllGradesRequest;
+=======
+>>>>>>> 5e4ebb1d52cf4c45ddee1d8804322c1715c945c0
 use App\Models\ClassSubject;
 use App\Models\ClassSubjectPlan;
 use App\Models\Grade;
@@ -115,6 +118,7 @@ class GradeController extends Controller
 
     public function saveAllGrades(SaveAllGradesRequest $request): JsonResponse
     {
+<<<<<<< HEAD
         $data = $request->validated();
         $user = $request->user();
 
@@ -255,5 +259,92 @@ class GradeController extends Controller
             'saved'   => $stats['saved'],
             'deleted' => $stats['deleted'],
         ]);
+=======
+        // return response()->json(['data' => $request->all()]);
+        // 1. التثبت من البيانات المرسلة
+        $request->validate([
+            'exam_id' => 'required|exists:assessment_types,id',
+            'students' => 'required|array',
+            'students.*.student_id' => 'required|exists:students,id',
+            'students.*.grades' => 'required|array',
+        ]);
+
+        $user = Auth::user();
+
+        if (!$user->hasPermissionTo('edit grades')) {
+            return response()->json(['error' => 'لا تملك صلاحية تعديل ورصد العلامات.'], 403);
+        }
+
+        $assessmentTypeId = $request->input('exam_id');
+
+        foreach ($request->students as $studentData) {
+            $studentId = $studentData['student_id'] ?? null;
+            if (!$studentId) continue;
+
+            $student = Student::find($studentId);
+            if (!$student) continue;
+
+            // حماية الناظر / المشرف
+            if ($user->hasRole('supervisor')) {
+                $section = Section::find($student->section_id);
+                if (!$section || $section->supervisor_id !== $user->id) {
+                    continue;
+                }
+            }
+
+           foreach ($studentData['grades'] as $item) {
+    $score = $item['grade'] ?? null;
+
+    // 🛑 1. تخطي العلامات الفارغة (null أو "")
+    if (is_null($score) || $score === '') {
+        continue;
+    }
+
+    $classSubjectId = $item['class_subject_id'] ?? null;
+    if (!$classSubjectId) continue;
+
+    $classSubject = ClassSubject::with('subject')->find($classSubjectId);
+    if (!$classSubject) continue;
+
+    $studentName = $student->student_name ?? "الطالب رقم {$student->id}";
+    $subjectName = $classSubject->subject->subject_name ?? "المادة رقم {$classSubject->id}";
+
+    // 🛑 2. رفض العلامات السالبة
+    if (!is_numeric($score) || (float) $score < 0) {
+        return response()->json([
+            'error' => "العلامة المدخلة ({$score}) للطالب ({$studentName}) في المادة ({$subjectName}) غير صالحة. لا يمكن إدخال علامة سالبة."
+        ], 422);
+    }
+
+    // 🛑 3. التحقق من السقف الأعلى للمكون (إذا وجد)
+    $componentId = $item['subject_component_id'] ?? null;
+    if ($componentId) {
+        $component = SubjectComponent::find($componentId);
+        if ($component && $score > $component->max_component_score) {
+            return response()->json([
+                'error' => "العلامة المدخلة ({$score}) للطالب ({$studentName}) في الجزء ({$component->component_name}) تتجاوز الحد الأقصى وهو ({$component->max_component_score})."
+            ], 422);
+        }
+    }
+
+                // 🛑 3. البحث والتحديث الآمن مع دعم الحقول التي تقبل null
+                $attributes = [
+                    'student_id'           => (int) $studentId,
+                    'class_subject_id'     => (int) $classSubjectId,
+                    'assessment_type_id'   => (int) $assessmentTypeId,
+                    'subject_component_id' => $componentId ? (int) $componentId : null,
+                ];
+
+                // نحدد القيم المراد حفظها في حال التحديث أو الإنشاء
+                $values = [
+                    'score' => $score,
+                ];
+
+                Grade::updateOrCreate($attributes, $values);
+            }
+        }
+
+        return response()->json(['message' => 'تم حفظ ورصد العلامات بنجاح']);
+>>>>>>> 5e4ebb1d52cf4c45ddee1d8804322c1715c945c0
     }
 }
