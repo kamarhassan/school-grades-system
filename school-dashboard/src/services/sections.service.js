@@ -19,3 +19,21 @@ export async function saveAllGrades(payload) {
     const response = await api.post(API_ROUTES.saveAllGrades, payload);
     return response.data;
 }
+
+
+
+export async function getGradeGridReports(sectionId) {
+    const response = await api.post(API_ROUTES.gradeGridReports, { section_id: sectionId });
+    return response.data;
+}
+
+
+// export const getGradeGridReports = (sectionId) => {
+     
+//     const response = await  api.post(API_ROUTES.gradeGridReports, {
+       
+//             section_id: sectionId,
+       
+//     });
+//     return response.data;
+// };

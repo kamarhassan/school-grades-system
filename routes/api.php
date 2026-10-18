@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\AssessmentController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\API\GradeController;
+use App\Http\Controllers\API\ReportsController;
 use App\Http\Controllers\Api\SchoolClassController;
 use App\Http\Controllers\Api\SectionController;
 use App\Http\Controllers\Api\SettingsController;
@@ -40,13 +41,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('sections', [SectionController::class, 'index']);
 
     Route::post('grades/grid', [GradeController::class, 'getGradeGrid']);
-
+    
     Route::get('class-sections', [SectionController::class, 'getSectionsByClass']); // get section if class_id is provided in the request   
     Route::middleware('permission:edit grades')->post('/grades/save', [GradeController::class, 'saveGrades']);
-
+    
     Route::post('saveAllGrades', [GradeController::class, 'saveAllGrades']);
-
-
+    
+    
+    Route::post('grades/grid-report', [ReportsController::class, 'getGradeGridReports']);
 
     route::prefix('settings')->group(function () {
         Route::get('sections', [SettingsController::class, 'index']);      // عرض الكل

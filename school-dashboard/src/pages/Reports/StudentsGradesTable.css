@@ -1,0 +1,99 @@
+
+.student-certificate {
+    padding: 24px;
+    margin: 24px 0;
+    color: #111;
+    background: white !important;
+    font-family: Arial, sans-serif;
+}
+
+.report-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 20px 0;
+}
+
+.certificate-header {
+    text-align: center;
+    line-height: 1.8;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #222;
+}
+
+.student-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 20px 0;
+}
+
+.grades-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    font-size: 14px;
+}
+
+.grades-table th,
+.grades-table td {
+    border: 1px solid #333;
+    padding: 10px 8px;
+}
+
+.grades-table th {
+    background: #eaeaea;
+    font-weight: bold;
+}
+
+.certificate-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+    font-size: 12px;
+}
+
+@media print {
+    @page {
+        size: A4 landscape;
+        margin: 10mm;
+    }
+
+    body {
+        background: white !important;
+    }
+
+    .report-toolbar {
+        display: none !important;
+    }
+
+    .student-certificate {
+        margin: 0 !important;
+        padding: 10px !important;
+        box-shadow: none !important;
+        border: 1px solid #777;
+        break-after: page;
+        page-break-after: always;
+    }
+
+    .student-certificate:last-child {
+        break-after: auto;
+        page-break-after: auto;
+    }
+
+    .grades-table {
+        font-size: 12px;
+    }
+
+    .grades-table th,
+    .grades-table td {
+        padding: 7px;
+    }
+
+    * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}

@@ -8,6 +8,8 @@ import { saveAllGrades } from "../../services/sections.service"; // 👈 Import 
 import { Box, CircularProgress, Button, Paper } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import { useSnackbar } from "notistack"; // 👈 استيراد Hook الخاص بـ notistack
+
+
 function Students() {
     const [classId, setClassId] = useState("");
     const [classes, setClasses] = useState([]);
@@ -20,20 +22,7 @@ function Students() {
     const [loading, setLoading] = useState(false);
     const [saveLoading, setSaveLoading] = useState(false); // 👈 Button loading state
 const { enqueueSnackbar } = useSnackbar();
-    // const [toast, setToast] = useState({
-    //     open: false,
-    //     message: "",
-    //     type: "success",
-    // });
-
-    // const showToast = (message, type = "success") => {
-    //     setToast({ open: true, message, type });
-    // };
-
-    // const handleCloseToast = () => {
-    //     setToast((prev) => ({ ...prev, open: false }));
-    // };
-
+   
     useEffect(() => {
         async function loadClasses() {
             try {
